@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meatingplace Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --red: #981E21;
+            --red-light: #fdf2f2;
+            --red-mid: #f5c6c7;
+            --black: #111111;
+            --gray-900: #222222;
+            --gray-700: #444444;
+            --gray-500: #777777;
+            --gray-300: #cccccc;
+            --gray-100: #f5f5f3;
+            --white: #ffffff;
+            --border: #e8e8e6;
+            --font-sans: 'Public Sans', sans-serif;
+            --font-serif: 'Lora', serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        #mp-data-center {
+            font-family: var(--font-sans);
+            background: var(--white);
+            color: var(--black);
+            font-size: 15px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #mp-data-center a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* HERO */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 48px;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 64px 40px 72px;
+            align-items: start;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        .eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--red);
+            flex-shrink: 0;
+        }
+
+        .hero-headline {
+            font-family: var(--font-sans);
+            font-size: clamp(32px, 4vw, 46px);
+            font-weight: 500;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--black);
+            margin-bottom: 20px;
+        }
+
+        .hero-headline em {
+            font-style: italic;
+            font-family: var(--font-serif);
+            color: var(--red);
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            color: var(--gray-500);
+            margin-bottom: 36px;
+            max-width: 480px;
+            line-height: 1.65;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 0;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 480px;
+        }
+
+        .stat {
+            flex: 1;
+            padding: 16px 20px;
+            border-right: 1px solid var(--border);
+        }
+
+        .stat:last-child {
+            border-right: none;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--black);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--gray-500);
+            letter-spacing: 0.3px;
+        }
+
+        .cta-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--red);
+            color: #ffffff !important;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: #7d1a1d;
+        }
+
+        .btn-ghost-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--gray-500);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .btn-ghost-link:hover {
+            color: var(--black);
+        }
+
+        .btn-ghost-link svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        /* PRICING CARD */
+        .mp-pricing-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 26px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .founding-pill {
+            display: inline-block;
+            background: var(--red-light);
+            color: var(--red);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .price-was {
+            font-size: 13px;
+            color: var(--gray-300);
+            text-decoration: line-through;
+            margin-bottom: 4px;
+        }
+
+        .price-main {
+            font-size: 42px;
+            font-weight: 600;
+            color: var(--black);
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .price-period {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+        }
+
+        .price-save {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--red);
+            margin-bottom: 4px;
+        }
+
+        .price-deadline {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--red);
+            margin-bottom: 22px;
+        }
+
+        .btn-cta-full {
+            display: block;
+            width: 100%;
+            background: var(--red);
+            color: #ffffff !important;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 13px;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: background 0.15s;
+        }
+
+        .btn-cta-full:hover {
+            background: #7d1a1d;
+        }
+
+        .card-trust {
+            font-size: 11px;
+            color: var(--gray-300);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .includes-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gray-300);
+            margin-bottom: 12px;
+        }
+
+        .include-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            font-size: 13px;
+            color: var(--gray-700);
+            margin-bottom: 9px;
+            line-height: 1.4;
+        }
+
+        .check-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--red-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .check-circle svg {
+            width: 8px;
+            height: 8px;
+            stroke: var(--red);
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .card-book-call {
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: var(--red);
+            text-decoration: none;
+            margin-top: 14px;
+        }
+
+        .card-book-call:hover {
+            text-decoration: underline;
+        }
+
+        /* FEATURES INTERACTIVE */
+        .features-section {
+            background: var(--gray-100);
+            border-top: 1px solid var(--border);
+            padding: 56px 40px;
+        }
+
+        .features-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--gray-300);
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-family: var(--font-sans);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--black);
+            margin-bottom: 36px;
+        }
+
+        .feat-layout {
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--white);
+        }
+
+        .feat-nav {
+            flex: 0 0 260px;
+            max-width: 260px;
+            border-right: 1px solid var(--border);
+            background: var(--white);
+        }
+
+        .feat-tab {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .feat-tab:last-child {
+            border-bottom: none;
+        }
+
+        .feat-tab-active {
+            background: var(--red-light);
+            border-left: 3px solid var(--red);
+        }
+
+        .feat-tab-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .feat-tab-desc {
+            font-size: 11px;
+            color: var(--gray-500);
+            line-height: 1.4;
+        }
+
+        .feat-display {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .feat-display img {
+            width: 100%;
+            display: block;
+        }
+
+        /* VIDEO */
+        .video-section {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 56px 40px;
+        }
+
+        .video-section .section-title {
+            text-align: center;
+        }
+
+        .video-section .section-eyebrow {
+            text-align: center;
+        }
+
+        .video-embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* TESTIMONIALS */
+        .testimonial-section {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 56px 40px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .testimonial-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 22px 20px;
+        }
+
+        .testimonial-quote {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-attr {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .testimonial-attr strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 1px;
+        }
+
+        /* BOTTOM CTA */
+        .bottom-cta {
+            background: var(--black);
+            padding: 56px 40px;
+            text-align: center;
+        }
+
+        .bottom-cta-inner {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .bottom-cta h2 {
+            font-family: var(--font-sans);
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--white);
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .bottom-cta p {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 28px;
+        }
+
+        .bottom-cta .btn-primary {
+            font-size: 15px;
+            padding: 14px 32px;
+        }
+
+        .bottom-cta .card-book-call {
+            color: var(--red-mid);
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 40px 24px 48px;
+            }
+
+            .mp-pricing-card {
+                position: static;
+            }
+
+            .feat-layout {
+                flex-direction: column;
+            }
+
+            .feat-nav {
+                flex: none;
+                max-width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .feat-tab {
+                white-space: nowrap;
+                border-bottom: none;
+                border-right: 1px solid var(--border);
+            }
+
+            .feat-tab:last-child {
+                border-right: none;
+            }
+
+            .feat-tab-active {
+                border-left: none;
+                border-bottom: 3px solid var(--red);
+            }
+
+            .feat-tab-desc {
+                display: none;
+            }
+
+            .testimonial-section {
+                grid-template-columns: 1fr;
+                padding: 40px 24px;
+            }
+
+            .features-section {
+                padding: 40px 24px;
+            }
+
+            .video-section {
+                padding: 40px 24px;
+            }
+
+            .bottom-cta {
+                padding: 48px 24px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .stats-row {
+                flex-wrap: wrap;
+            }
+
+            .stat {
+                flex: 1 1 45%;
+            }
+
+            .hero-headline {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body style="margin:0;padding:0;">
+    <div id="mp-data-center">
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div>
+                <div class="eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    New product
+                </div>
+                <h1 class="hero-headline">Every cut. <em>Every price move.</em></h1>
+                <p class="hero-sub">Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.</p>
+
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-val">350+</div>
+                        <div class="stat-label">WHOLESALE CUTS</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-val">Daily</div>
+                        <div class="stat-label">USDA UPDATES</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-val">15+ years</div>
+                        <div class="stat-label">OF HISTORICAL DATA</div>
+                    </div>
+                </div>
+
+                <div class="cta-row">
+                    <button class="btn-primary" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+                    <a href="#features" class="btn-ghost-link" onclick="smoothScrollTo('features')">See all features</a>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <a href="https://calendly.com/chris-meatingplace/30min" class="btn-ghost-link">Or book a call with our team to learn more</a>
+                </div>
+            </div>
+
+            <!-- PRICING CARD -->
+            <div class="mp-pricing-card">
+                <div class="founding-pill">Founding member pricing</div>
+                <div class="price-was">$3,999/year</div>
+                <div class="price-main">$999</div>
+                <div class="price-period">for your first year</div>
+                <div class="price-save">Save 75%</div>
+                <div class="price-deadline">Offer ends July 31st</div>
+
+                <button class="btn-cta-full" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+                <div class="card-trust">30-day money-back guarantee</div>
+
+                <div class="card-divider"></div>
+
+                <div class="includes-label">Your subscription includes</div>
+                <div class="include-item">
+                    <div class="check-circle">
+                        <svg viewBox="0 0 12 9" fill="none">
+                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
+                        </svg>
+                    </div>
+                    Access to Meatingplace Data
+                </div>
+                <div class="include-item">
+                    <div class="check-circle">
+                        <svg viewBox="0 0 12 9" fill="none">
+                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
+                        </svg>
+                    </div>
+                    Daily Livestock Report premium newsletter
+                </div>
+                <div class="include-item">
+                    <div class="check-circle">
+                        <svg viewBox="0 0 12 9" fill="none">
+                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
+                        </svg>
+                    </div>
+                    Hales Cattle Letter premium newsletter
+                </div>
+                <div class="include-item">
+                    <div class="check-circle">
+                        <svg viewBox="0 0 12 9" fill="none">
+                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
+                        </svg>
+                    </div>
+                    Meatingplace AI and historical archive
+                </div>
+
+                <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION -->
+        <section class="features-section" id="features">
+            <div class="features-inner">
+                <div class="section-eyebrow">Features</div>
+                <h2 class="section-title">One dashboard. Everything you need.</h2>
+
+                <div class="feat-layout">
+                    <div class="feat-nav">
+                        <div class="feat-tab feat-tab-active" onclick="showFeatureTab('cuts')">
+                            <div class="feat-tab-title">My Cuts</div>
+                            <div class="feat-tab-desc">Personalized dashboard for the cuts you trade.</div>
+                        </div>
+                        <div class="feat-tab" onclick="showFeatureTab('alerts')">
+                            <div class="feat-tab-title">Price Alerts</div>
+                            <div class="feat-tab-desc">Get notified when prices cross your thresholds.</div>
+                        </div>
+                        <div class="feat-tab" onclick="showFeatureTab('prices')">
+                            <div class="feat-tab-title">Daily USDA Prices</div>
+                            <div class="feat-tab-desc">350+ cuts, 5 proteins, updated daily.</div>
+                        </div>
+                        <div class="feat-tab" onclick="showFeatureTab('history')">
+                            <div class="feat-tab-title">4-Year Historical</div>
+                            <div class="feat-tab-desc">Spot seasonality, time contracts.</div>
+                        </div>
+                        <div class="feat-tab" onclick="showFeatureTab('storage')">
+                            <div class="feat-tab-title">Cold Storage</div>
+                            <div class="feat-tab-desc">Inventory levels + supply signals.</div>
+                        </div>
+                        <div class="feat-tab" onclick="showFeatureTab('trade')">
+                            <div class="feat-tab-title">Trade Data</div>
+                            <div class="feat-tab-desc">Import/export volumes by protein.</div>
+                        </div>
+                    </div>
+
+                    <div class="feat-display">
+                        <div id="feat-panel-cuts" class="feat-panel" style="display: block;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/my-cuts-dashboard.png" alt="My Cuts">
+                        </div>
+                        <div id="feat-panel-alerts" class="feat-panel" style="display: none;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/price-alerts.png" alt="Price Alerts">
+                        </div>
+                        <div id="feat-panel-prices" class="feat-panel" style="display: none;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/short-range-chart.jpg" alt="Short Range">
+                        </div>
+                        <div id="feat-panel-history" class="feat-panel" style="display: none;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/long-range-chart.png" alt="Long Range">
+                        </div>
+                        <div id="feat-panel-storage" class="feat-panel" style="display: none;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/cold-storage.png" alt="Cold Storage">
+                        </div>
+                        <div id="feat-panel-trade" class="feat-panel" style="display: none;">
+                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/trade-data.png" alt="Trade Data">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIDEO SECTION -->
+        <section class="video-section">
+            <div class="section-eyebrow">Product demo</div>
+            <h2 class="section-title">See it in action.</h2>
+            <div class="video-embed-container">
+                <iframe id="yt-iframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" title="Product demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="yt-unmute-btn" style="display: none; background: var(--red); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px;" onclick="toggleMute()">Click to unmute</button>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS SECTION -->
+        <section class="testimonial-section">
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"One stop, one shop. I can go look at anything. I can draw the correlations."</div>
+                <div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"We pay $3,000 to $5,000 a month for something similar."</div>
+                <div class="testimonial-attr"><strong>Senior Buyer</strong>Regional Producer</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"The hook is the AI's ability to answer questions."</div>
+                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"With our current set-up, it's so cumbersome."</div>
+                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"It brings all my fragmented reports together — that's why I like this."</div>
+                <div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"Being able to toggle and set specific items to watch... that's right on the money."</div>
+                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
+            </div>
+        </section>
+
+        <!-- BOTTOM CTA -->
+        <section class="bottom-cta">
+            <div class="bottom-cta-inner">
+                <h2>Start your free trial today.</h2>
+                <p>$999 for your first year. Offer ends July 31st.</p>
+                <button class="btn-primary" onclick="mpTrialClick(event)" style="margin: 0 auto;">Start 14-day free trial</button>
+                <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // GA4 event tracking via postMessage to parent WordPress page
+        function mpTrackEvent(eventName, label) {
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'mp-ga4-event',
+                    event: eventName,
+                    label: label
+                }, 'https://meatingplace.com');
+            }
+        }
+
+        // Stripe + Omeda integration
+        var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
+        var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
+
+        function getEncryptedId() {
+            var r = '';
+            try {
+                var p = new URLSearchParams(window.location.search);
+                r = p.get('r') || '';
+                if (!r) {
+                    var pp = new URLSearchParams(window.parent.location.search);
+                    r = pp.get('r') || '';
+                }
+            } catch(ex) {}
+            if (!r) {
+                var m = document.cookie.match(/(?:^|;\s*)oly_enc_id=([^;]+)/);
+                if (m) r = decodeURIComponent(m[1]);
+            }
+            return r;
+        }
+
+        var encryptedId = getEncryptedId();
+        if (encryptedId) {
+            try {
+                localStorage.setItem('mp_omeda_eid', encryptedId);
+            } catch(ex) {}
+        }
+
+        function mpTrialClick(e) {
+            e.preventDefault();
+            mpTrackEvent('free_trial_click', 'Start 14-day free trial');
+            var eid = getEncryptedId();
+            if (eid) {
+                try {
+                    localStorage.setItem('mp_omeda_eid', eid);
+                } catch(ex) {}
+                window.open('https://meatingplace-data-signup-prod.pages.dev/checkout?eid=' + encodeURIComponent(eid), '_blank');
+            } else {
+                window.open(OMEDA_LOGIN_FORM_URL, '_blank');
+            }
+        }
+
+        // Track Calendly clicks
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('a[href*="calendly"]');
+            if (link) {
+                mpTrackEvent('schedule_call_click', 'Book a call');
+            }
+        });
+
+        // Feature tab switching
+        function showFeatureTab(tabId) {
+            document.querySelectorAll('.feat-panel').forEach(function(p) {
+                p.style.display = 'none';
+            });
+            document.querySelectorAll('.feat-tab').forEach(function(t) {
+                t.classList.remove('feat-tab-active');
+            });
+            var panel = document.getElementById('feat-panel-' + tabId);
+            if (panel) panel.style.display = 'block';
+            document.querySelectorAll('.feat-tab').forEach(function(t) {
+                if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'" + tabId + "'") > -1) {
+                    t.classList.add('feat-tab-active');
+                }
+            });
+        }
+
+        // Smooth scroll for anchor links
+        function smoothScrollTo(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var rect = el.getBoundingClientRect();
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            window.scrollTo({
+                top: rect.top + scrollTop,
+                behavior: 'smooth'
+            });
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'mp-scroll',
+                    offsetTop: rect.top
+                }, 'https://meatingplace.com');
+            }
+        }
+
+        // YouTube mute/unmute
+        var ytIframe = document.getElementById('yt-iframe');
+        if (ytIframe) {
+            ytIframe.addEventListener('load', function() {
+                document.getElementById('yt-unmute-btn').style.display = 'inline-flex';
+            });
+        }
+
+        function toggleMute() {
+            var iframe = document.getElementById('yt-iframe');
+            if (!iframe || !iframe.contentWindow) return;
+            iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+            document.getElementById('yt-unmute-btn').style.display = 'none';
+        }
+
+        // iframe resize for WordPress
+        (function(){
+            function sendHeight() {
+                var h = document.getElementById('mp-data-center');
+                if (h && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'mp-resize',
+                        height: h.scrollHeight
+                    }, 'https://meatingplace.com');
+                }
+            }
+            window.addEventListener('load', sendHeight);
+            new MutationObserver(sendHeight).observe(document.getElementById('mp-data-center'), {
+                childList: true,
+                subtree: true,
+                attributes: true
+            });
+            setInterval(sendHeight, 2000);
+        })();
+    </script>
+</body>
+</html>
