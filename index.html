@@ -770,6 +770,57 @@
             }
         }
 
+        // A/B Test: Hero Copy Variants
+        (function() {
+            var defined = {
+                control: {
+                    headline: 'Every cut. <em>Every price move.</em>',
+                    sub: 'Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.'
+                },
+                trust: {
+                    headline: 'The number that <em>doesn\'t lie.</em>',
+                    sub: 'When sales reps spin stories, you need a source of truth. Daily USDA prices across beef, pork, poultry, and lamb — updated every trading day.'
+                },
+                speed: {
+                    headline: 'Your morning market check — <em>done in 30 seconds.</em>',
+                    sub: 'Today\'s price. Yesterday\'s close. The week\'s trend. For every cut you trade. No clutter, just what you need.'
+                }
+            };
+
+            var defined_KEYS = ['control', 'trust', 'speed'];
+            var defined_KEY = 'mp_ab_hero_v1';
+
+            // Check for existing assignment or assign randomly
+            var variant = localStorage.getItem(defined_KEY);
+            if (!variant || !defined[variant]) {
+                variant = defined_KEYS[Math.floor(Math.random() * defined_KEYS.length)];
+                try { localStorage.setItem(defined_KEY, variant); } catch(e) {}
+            }
+
+            // Store globally for conversion tracking
+            window.mpAbVariant = variant;
+
+            // Apply variant on DOM ready
+            function applyVariant() {
+                var headlineEl = document.querySelector('.hero-headline');
+                var subEl = document.querySelector('.hero-sub');
+                if (headlineEl && defined[variant]) {
+                    headlineEl.innerHTML = defined[variant].headline;
+                }
+                if (subEl && defined[variant]) {
+                    subEl.textContent = defined[variant].sub;
+                }
+                // Track variant view
+                mpTrackEvent('ab_hero_view', variant);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', applyVariant);
+            } else {
+                applyVariant();
+            }
+        })();
+
         // Stripe + Omeda integration
         var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
         var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
@@ -800,7 +851,8 @@
 
         function mpTrialClick(e) {
             e.preventDefault();
-            mpTrackEvent('free_trial_click', 'Start 14-day free trial');
+            var variant = window.mpAbVariant || 'unknown';
+            mpTrackEvent('free_trial_click', variant);
             var eid = getEncryptedId();
             if (eid) {
                 try {
@@ -816,7 +868,8 @@
         document.addEventListener('click', function(e) {
             var link = e.target.closest('a[href*="calendly"]');
             if (link) {
-                mpTrackEvent('schedule_call_click', 'Book a call');
+                var variant = window.mpAbVariant || 'unknown';
+                mpTrackEvent('schedule_call_click', variant);
             }
         });
 
