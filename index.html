@@ -758,9 +758,26 @@
         </section>
     </div>
 
+    <!-- GA4 Direct Tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W4EXW033KR"></script>
     <script>
-        // GA4 event tracking via postMessage to parent WordPress page
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W4EXW033KR', { send_page_view: false });
+
+        // GA4 event tracking - direct to GA4 + postMessage to parent for backwards compat
         function mpTrackEvent(eventName, label) {
+            // Send directly to GA4 with label parameter
+            gtag('event', eventName, {
+                'event_category': 'ab_test',
+                'event_label': label,
+                'label': label,
+                'ab_variant': label,
+                'page_location': window.location.href
+            });
+
+            // Also send via postMessage for backwards compatibility
             if (window.parent !== window) {
                 window.parent.postMessage({
                     type: 'mp-ga4-event',
@@ -825,6 +842,49 @@
         var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
         var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
 
+        // Omeda Identity Capture for Lead Tracking
+        var mpOmedaId = null;
+
+        // Listen for Omeda identity from parent frame (WordPress on meatingplace.com)
+        window.addEventListener('message', function(event) {
+            if (event.origin !== 'https://meatingplace.com') return;
+            if (event.data && event.data.type === 'mp-omeda-identity') {
+                if (event.data.olyEncId) {
+                    mpOmedaId = event.data.olyEncId;
+                    try {
+                        localStorage.setItem('mp_omeda_eid', mpOmedaId);
+                    } catch(ex) {}
+                }
+            }
+        });
+
+        // Request identity from parent on load
+        if (window.parent !== window) {
+            try {
+                window.parent.postMessage({ type: 'mp-request-identity' }, 'https://meatingplace.com');
+            } catch(ex) {}
+        }
+
+        // Capture lead to dashboard API
+        function mpCaptureLead(action) {
+            var variant = window.mpAbVariant || 'unknown';
+            var eid = mpOmedaId || getEncryptedId() || localStorage.getItem('mp_omeda_eid') || null;
+            try {
+                fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/capture-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page: 'data',
+                        action: action,
+                        omedaId: eid,
+                        variant: variant,
+                        referrer: document.referrer,
+                        userAgent: navigator.userAgent
+                    })
+                });
+            } catch(ex) {}
+        }
+
         function getEncryptedId() {
             var r = '';
             try {
@@ -853,6 +913,7 @@
             e.preventDefault();
             var variant = window.mpAbVariant || 'unknown';
             mpTrackEvent('free_trial_click', variant);
+            mpCaptureLead('free_trial_click');
             var eid = getEncryptedId();
             if (eid) {
                 try {
@@ -870,6 +931,7 @@
             if (link) {
                 var variant = window.mpAbVariant || 'unknown';
                 mpTrackEvent('schedule_call_click', variant);
+                mpCaptureLead('schedule_call_click');
             }
         });
 
