@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meatingplace Data</title>
+    <!-- Redirect direct Vercel access to meatingplace.com for Olytics identity -->
+    <script>
+        (function() {
+            var isVercelDirect = window.location.hostname.includes('vercel.app') && window.parent === window;
+            if (isVercelDirect) {
+                window.location.replace('https://meatingplace.com/data/');
+            }
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after {
@@ -817,6 +826,32 @@
             // Store globally for conversion tracking
             window.mpAbVariant = variant;
 
+            // Get or create visitor ID for unique user tracking
+            function getVisitorId() {
+                var id = localStorage.getItem('mp_visitor_id');
+                if (!id) {
+                    id = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('mp_visitor_id', id);
+                }
+                return id;
+            }
+
+            // Track view to our own API for real-time variant analytics
+            function trackView(v) {
+                fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/track-view', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page: 'data',
+                        variant: v,
+                        visitorId: getVisitorId(),
+                        referrer: document.referrer
+                    })
+                }).catch(function(err) {
+                    console.log('View tracking error:', err);
+                });
+            }
+
             // Apply variant on DOM ready
             function applyVariant() {
                 var headlineEl = document.querySelector('.hero-headline');
@@ -829,6 +864,8 @@
                 }
                 // Track variant view
                 mpTrackEvent('ab_hero_view', variant);
+                // Track to our own API
+                trackView(variant);
             }
 
             if (document.readyState === 'loading') {
