@@ -388,7 +388,7 @@
                 <div class="stat"><div class="stat-val">15+ years</div><div class="stat-label">OF HISTORICAL DATA</div></div>
             </div>
             <div class="cta-row">
-                <button class="btn-primary" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+                <button class="btn-primary" onclick="mpTrialClick(event)">Start 7-day free trial</button>
                 <a href="#features-v1" class="btn-ghost-link" onclick="smoothScrollTo('features-v1')">See all features</a>
             </div>
             <div style="margin-top: 24px;">
@@ -401,8 +401,7 @@
             <div class="price-main">$999</div>
             <div class="price-period">for your first year</div>
             <div class="price-save">Save 75%</div>
-            <div class="price-deadline">Offer ends August 31st</div>
-            <button class="btn-cta-full" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+            <button class="btn-cta-full" onclick="mpTrialClick(event)">Start 7-day free trial</button>
             <div class="card-trust">30-day money-back guarantee</div>
             <div class="card-divider"></div>
             <div class="includes-label">Your subscription includes</div>
@@ -448,8 +447,8 @@
     <section class="bottom-cta">
         <div class="bottom-cta-inner">
             <h2>Start your free trial today.</h2>
-            <p>$999 for your first year. Offer ends August 31st.</p>
-            <button class="btn-primary" onclick="mpTrialClick(event)" style="margin: 0 auto;">Start 14-day free trial</button>
+            <p>$999 for your first year.</p>
+            <button class="btn-primary" onclick="mpTrialClick(event)" style="margin: 0 auto;">Start 7-day free trial</button>
             <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
         </div>
     </section>
@@ -627,7 +626,7 @@
 
     <section class="v2-final-cta" id="pricing-v2">
         <h2 class="v2-final-cta__heading">Ready to Trade Smarter?</h2>
-        <p class="v2-final-cta__sub">$999 for your first year. Offer ends August 31st. 30-day money-back guarantee.</p>
+        <p class="v2-final-cta__sub">$999 for your first year. 30-day money-back guarantee.</p>
         <button class="btn v2-btn--invert" onclick="mpTrialClick(event)">Start Free Trial</button>
     </section>
 </div>
@@ -755,8 +754,8 @@
     })();
 
     // Stripe + Omeda integration
-    var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
-    var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
+    // Every trial click goes to the Meatingplace checkout (Stripe). It sends signed-out readers to registration first.
+    var DATA_CHECKOUT_URL = 'https://join.meatingplace.com/start?offer=data_intro';
     var mpOmedaId = null;
 
     window.addEventListener('message', function(event) {
@@ -818,12 +817,12 @@
         mpTrackEvent('free_trial_click', variant);
         mpCaptureLead('free_trial_click');
         var eid = getEncryptedId();
+        var url = DATA_CHECKOUT_URL + '&src=data_landing_' + encodeURIComponent(variant);
         if (eid) {
             try { localStorage.setItem('mp_omeda_eid', eid); } catch(ex) {}
-            window.open('https://meatingplace-data-signup-prod.pages.dev/checkout?eid=' + encodeURIComponent(eid) + '&variant=' + encodeURIComponent(variant), '_blank');
-        } else {
-            window.open(OMEDA_LOGIN_FORM_URL + '&lp_variant=' + encodeURIComponent(variant), '_blank');
+            url += '&oly_enc_id=' + encodeURIComponent(eid);
         }
+        window.open(url, '_blank');
     }
 
     document.addEventListener('click', function(e) {
