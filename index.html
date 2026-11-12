@@ -4,1028 +4,971 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meatingplace Data</title>
-    <!-- Redirect direct Vercel access to meatingplace.com for Olytics identity -->
+    <!-- Redirect direct Vercel access to meatingplace.com for Olytics identity (skip if variant param present for testing) -->
     <script>
         (function() {
+            var hasVariantParam = window.location.search.includes('variant=');
             var isVercelDirect = window.location.hostname.includes('vercel.app') && window.parent === window;
-            if (isVercelDirect) {
+            if (isVercelDirect && !hasVariantParam) {
                 window.location.replace('https://meatingplace.com/data-sign-up/');
             }
         })();
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&family=Roboto:wght@400;600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        /* ===================== SHARED BASE ===================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { scroll-behavior: smooth; margin: 0; padding: 0; height: auto; }
 
+        /* Layout switcher */
+        #layout-v1, #layout-v2 { display: none; }
+        #layout-v1.is-active, #layout-v2.is-active { display: block; }
+
+        /* ===================== V1 LAYOUT STYLES (Original A/B) ===================== */
         :root {
-            --red: #981E21;
-            --red-light: #fdf2f2;
-            --red-mid: #f5c6c7;
-            --black: #111111;
-            --gray-900: #222222;
-            --gray-700: #444444;
-            --gray-500: #777777;
-            --gray-300: #cccccc;
-            --gray-100: #f5f5f3;
-            --white: #ffffff;
-            --border: #e8e8e6;
-            --font-sans: 'Public Sans', sans-serif;
-            --font-serif: 'Lora', serif;
+            --v1-red: #981E21;
+            --v1-red-light: #fdf2f2;
+            --v1-red-mid: #f5c6c7;
+            --v1-black: #111111;
+            --v1-gray-900: #222222;
+            --v1-gray-700: #444444;
+            --v1-gray-500: #777777;
+            --v1-gray-300: #cccccc;
+            --v1-gray-100: #f5f5f3;
+            --v1-white: #ffffff;
+            --v1-border: #e8e8e6;
+            --v1-font-sans: 'Public Sans', sans-serif;
+            --v1-font-serif: 'Lora', serif;
         }
 
-        html, body {
-            scroll-behavior: smooth;
-            margin: 0;
-            padding: 0;
-            height: auto;
-        }
-
-        #mp-data-center {
-            font-family: var(--font-sans);
-            background: var(--white);
-            color: var(--black);
+        #layout-v1 {
+            font-family: var(--v1-font-sans);
+            background: var(--v1-white);
+            color: var(--v1-black);
             font-size: 15px;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
+        #layout-v1 a { text-decoration: none; color: inherit; }
 
-        #mp-data-center a {
-            text-decoration: none;
-            color: inherit;
+        #layout-v1 .hero {
+            display: grid; grid-template-columns: 1fr 340px; gap: 48px;
+            max-width: 1080px; margin: 0 auto; padding: 16px 40px 72px; align-items: start;
         }
-
-        /* HERO */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 48px;
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 16px 40px 72px;
-            align-items: start;
+        #layout-v1 .eyebrow {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 600; letter-spacing: 1.4px;
+            text-transform: uppercase; color: var(--v1-red); margin-bottom: 20px;
         }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-            color: var(--red);
-            margin-bottom: 20px;
+        #layout-v1 .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--v1-red); flex-shrink: 0; }
+        #layout-v1 .hero-headline {
+            font-family: var(--v1-font-sans); font-size: clamp(32px, 4vw, 46px);
+            font-weight: 500; line-height: 1.1; letter-spacing: -0.03em;
+            color: var(--v1-black); margin-bottom: 20px;
         }
-
-        .eyebrow-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--red);
-            flex-shrink: 0;
+        #layout-v1 .hero-headline em { font-style: italic; font-family: var(--v1-font-serif); color: var(--v1-red); }
+        #layout-v1 .hero-sub { font-size: 15px; color: var(--v1-gray-500); margin-bottom: 36px; max-width: 480px; line-height: 1.65; }
+        #layout-v1 .stats-row { display: flex; gap: 0; margin-bottom: 40px; border: 1px solid var(--v1-border); border-radius: 8px; overflow: hidden; max-width: 480px; }
+        #layout-v1 .stat { flex: 1; padding: 16px 20px; border-right: 1px solid var(--v1-border); }
+        #layout-v1 .stat:last-child { border-right: none; }
+        #layout-v1 .stat-val { font-size: 20px; font-weight: 600; color: var(--v1-black); line-height: 1; margin-bottom: 4px; }
+        #layout-v1 .stat-label { font-size: 11px; color: var(--v1-gray-500); letter-spacing: 0.3px; }
+        #layout-v1 .cta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        #layout-v1 .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--v1-red); color: #ffffff !important;
+            font-family: var(--v1-font-sans); font-size: 14px; font-weight: 500;
+            padding: 12px 24px; border-radius: 6px; border: none; cursor: pointer;
+            text-decoration: none; transition: background 0.15s; white-space: nowrap;
         }
+        #layout-v1 .btn-primary:hover { background: #7d1a1d; }
+        #layout-v1 .btn-ghost-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--v1-gray-500); text-decoration: none; transition: color 0.15s; }
+        #layout-v1 .btn-ghost-link:hover { color: var(--v1-black); }
+        #layout-v1 .mp-pricing-card { background: var(--v1-white); border: 1px solid var(--v1-border); border-radius: 12px; padding: 28px 26px; position: sticky; top: 24px; }
+        #layout-v1 .founding-pill { display: inline-block; background: var(--v1-red-light); color: var(--v1-red); font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+        #layout-v1 .price-was { font-size: 13px; color: var(--v1-gray-300); text-decoration: line-through; margin-bottom: 4px; }
+        #layout-v1 .price-main { font-size: 42px; font-weight: 600; color: var(--v1-black); letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px; }
+        #layout-v1 .price-period { font-size: 13px; color: var(--v1-gray-500); margin-bottom: 4px; }
+        #layout-v1 .price-save { font-size: 12px; font-weight: 600; color: var(--v1-red); margin-bottom: 4px; }
+        #layout-v1 .price-deadline { font-size: 11px; font-weight: 600; color: var(--v1-red); margin-bottom: 22px; }
+        #layout-v1 .btn-cta-full { display: block; width: 100%; background: var(--v1-red); color: #ffffff !important; font-family: var(--v1-font-sans); font-size: 14px; font-weight: 500; padding: 13px; border-radius: 7px; border: none; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 10px; transition: background 0.15s; }
+        #layout-v1 .btn-cta-full:hover { background: #7d1a1d; }
+        #layout-v1 .card-trust { font-size: 11px; color: var(--v1-gray-300); text-align: center; margin-bottom: 20px; }
+        #layout-v1 .card-divider { height: 1px; background: var(--v1-border); margin: 20px 0; }
+        #layout-v1 .includes-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--v1-gray-300); margin-bottom: 12px; }
+        #layout-v1 .include-item { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--v1-gray-700); margin-bottom: 9px; line-height: 1.4; }
+        #layout-v1 .check-circle { width: 16px; height: 16px; border-radius: 50%; background: var(--v1-red-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        #layout-v1 .check-circle svg { width: 8px; height: 8px; stroke: var(--v1-red); fill: none; stroke-width: 2.5; }
+        #layout-v1 .card-book-call { display: block; text-align: center; font-size: 12px; color: var(--v1-red); text-decoration: none; margin-top: 14px; }
+        #layout-v1 .card-book-call:hover { text-decoration: underline; }
+        #layout-v1 .features-section { background: var(--v1-gray-100); border-top: 1px solid var(--v1-border); padding: 56px 40px; }
+        #layout-v1 .features-inner { max-width: 1080px; margin: 0 auto; }
+        #layout-v1 .section-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--v1-gray-300); margin-bottom: 8px; }
+        #layout-v1 .section-title { font-family: var(--v1-font-sans); font-size: 22px; font-weight: 500; color: var(--v1-black); margin-bottom: 36px; }
+        #layout-v1 .feat-layout { display: flex; gap: 0; align-items: stretch; border: 1px solid var(--v1-border); border-radius: 10px; overflow: hidden; background: var(--v1-white); }
+        #layout-v1 .feat-nav { flex: 0 0 260px; max-width: 260px; border-right: 1px solid var(--v1-border); background: var(--v1-white); }
+        #layout-v1 .feat-tab { padding: 16px 20px; border-bottom: 1px solid var(--v1-border); cursor: pointer; transition: background 0.15s; }
+        #layout-v1 .feat-tab:last-child { border-bottom: none; }
+        #layout-v1 .feat-tab-active { background: var(--v1-red-light); border-left: 3px solid var(--v1-red); }
+        #layout-v1 .feat-tab-title { font-size: 13px; font-weight: 600; color: var(--v1-black); margin-bottom: 2px; }
+        #layout-v1 .feat-tab-desc { font-size: 11px; color: var(--v1-gray-500); line-height: 1.4; }
+        #layout-v1 .feat-display { flex: 1; min-width: 0; display: flex; align-items: center; overflow: hidden; }
+        #layout-v1 .feat-display img { width: 100%; display: block; }
+        #layout-v1 .testimonial-section { max-width: 1080px; margin: 0 auto; padding: 56px 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        #layout-v1 .testimonial-card { border: 1px solid var(--v1-border); border-radius: 10px; padding: 22px 20px; }
+        #layout-v1 .testimonial-quote { font-family: var(--v1-font-serif); font-style: italic; font-size: 14px; color: var(--v1-gray-700); line-height: 1.65; margin-bottom: 16px; }
+        #layout-v1 .testimonial-attr { font-size: 12px; color: var(--v1-gray-500); }
+        #layout-v1 .testimonial-attr strong { display: block; font-size: 13px; font-weight: 600; color: var(--v1-black); margin-bottom: 1px; }
+        #layout-v1 .bottom-cta { background: var(--v1-black); padding: 56px 40px; text-align: center; }
+        #layout-v1 .bottom-cta-inner { max-width: 520px; margin: 0 auto; }
+        #layout-v1 .bottom-cta h2 { font-family: var(--v1-font-sans); font-size: 26px; font-weight: 500; color: var(--v1-white); letter-spacing: -0.02em; margin-bottom: 10px; }
+        #layout-v1 .bottom-cta p { font-size: 14px; color: #888; margin-bottom: 28px; }
+        #layout-v1 .bottom-cta .btn-primary { font-size: 15px; padding: 14px 32px; }
+        #layout-v1 .bottom-cta .card-book-call { color: var(--v1-red-mid); margin-top: 16px; font-size: 13px; }
 
-        .hero-headline {
-            font-family: var(--font-sans);
-            font-size: clamp(32px, 4vw, 46px);
-            font-weight: 500;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-            color: var(--black);
-            margin-bottom: 20px;
-        }
-
-        .hero-headline em {
-            font-style: italic;
-            font-family: var(--font-serif);
-            color: var(--red);
-        }
-
-        .hero-sub {
-            font-size: 15px;
-            color: var(--gray-500);
-            margin-bottom: 36px;
-            max-width: 480px;
-            line-height: 1.65;
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 0;
-            margin-bottom: 40px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            max-width: 480px;
-        }
-
-        .stat {
-            flex: 1;
-            padding: 16px 20px;
-            border-right: 1px solid var(--border);
-        }
-
-        .stat:last-child {
-            border-right: none;
-        }
-
-        .stat-val {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--black);
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--gray-500);
-            letter-spacing: 0.3px;
-        }
-
-        .cta-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--red);
-            color: #ffffff !important;
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 12px 24px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            background: #7d1a1d;
-        }
-
-        .btn-ghost-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: var(--gray-500);
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .btn-ghost-link:hover {
-            color: var(--black);
-        }
-
-        .btn-ghost-link svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-
-        /* PRICING CARD */
-        .mp-pricing-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 28px 26px;
-            position: sticky;
-            top: 24px;
-        }
-
-        .founding-pill {
-            display: inline-block;
-            background: var(--red-light);
-            color: var(--red);
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-
-        .price-was {
-            font-size: 13px;
-            color: var(--gray-300);
-            text-decoration: line-through;
-            margin-bottom: 4px;
-        }
-
-        .price-main {
-            font-size: 42px;
-            font-weight: 600;
-            color: var(--black);
-            letter-spacing: -0.04em;
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .price-period {
-            font-size: 13px;
-            color: var(--gray-500);
-            margin-bottom: 4px;
-        }
-
-        .price-save {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--red);
-            margin-bottom: 4px;
-        }
-
-        .price-deadline {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--red);
-            margin-bottom: 22px;
-        }
-
-        .btn-cta-full {
-            display: block;
-            width: 100%;
-            background: var(--red);
-            color: #ffffff !important;
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 13px;
-            border-radius: 7px;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: background 0.15s;
-        }
-
-        .btn-cta-full:hover {
-            background: #7d1a1d;
-        }
-
-        .card-trust {
-            font-size: 11px;
-            color: var(--gray-300);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .card-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 20px 0;
-        }
-
-        .includes-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--gray-300);
-            margin-bottom: 12px;
-        }
-
-        .include-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 9px;
-            font-size: 13px;
-            color: var(--gray-700);
-            margin-bottom: 9px;
-            line-height: 1.4;
-        }
-
-        .check-circle {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--red-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .check-circle svg {
-            width: 8px;
-            height: 8px;
-            stroke: var(--red);
-            fill: none;
-            stroke-width: 2.5;
-        }
-
-        .card-book-call {
-            display: block;
-            text-align: center;
-            font-size: 12px;
-            color: var(--red);
-            text-decoration: none;
-            margin-top: 14px;
-        }
-
-        .card-book-call:hover {
-            text-decoration: underline;
-        }
-
-        /* FEATURES INTERACTIVE */
-        .features-section {
-            background: var(--gray-100);
-            border-top: 1px solid var(--border);
-            padding: 56px 40px;
-        }
-
-        .features-inner {
-            max-width: 1080px;
-            margin: 0 auto;
-        }
-
-        .section-eyebrow {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-            color: var(--gray-300);
-            margin-bottom: 8px;
-        }
-
-        .section-title {
-            font-family: var(--font-sans);
-            font-size: 22px;
-            font-weight: 500;
-            color: var(--black);
-            margin-bottom: 36px;
-        }
-
-        .feat-layout {
-            display: flex;
-            gap: 0;
-            align-items: stretch;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            background: var(--white);
-        }
-
-        .feat-nav {
-            flex: 0 0 260px;
-            max-width: 260px;
-            border-right: 1px solid var(--border);
-            background: var(--white);
-        }
-
-        .feat-tab {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .feat-tab:last-child {
-            border-bottom: none;
-        }
-
-        .feat-tab-active {
-            background: var(--red-light);
-            border-left: 3px solid var(--red);
-        }
-
-        .feat-tab-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--black);
-            margin-bottom: 2px;
-        }
-
-        .feat-tab-desc {
-            font-size: 11px;
-            color: var(--gray-500);
-            line-height: 1.4;
-        }
-
-        .feat-display {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .feat-display img {
-            width: 100%;
-            display: block;
-        }
-
-        /* TESTIMONIALS */
-        .testimonial-section {
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 56px 40px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .testimonial-card {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 22px 20px;
-        }
-
-        .testimonial-quote {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            color: var(--gray-700);
-            line-height: 1.65;
-            margin-bottom: 16px;
-        }
-
-        .testimonial-attr {
-            font-size: 12px;
-            color: var(--gray-500);
-        }
-
-        .testimonial-attr strong {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--black);
-            margin-bottom: 1px;
-        }
-
-        /* BOTTOM CTA */
-        .bottom-cta {
-            background: var(--black);
-            padding: 56px 40px;
-            text-align: center;
-        }
-
-        .bottom-cta-inner {
-            max-width: 520px;
-            margin: 0 auto;
-        }
-
-        .bottom-cta h2 {
-            font-family: var(--font-sans);
-            font-size: 26px;
-            font-weight: 500;
-            color: var(--white);
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
-        }
-
-        .bottom-cta p {
-            font-size: 14px;
-            color: #888;
-            margin-bottom: 28px;
-        }
-
-        .bottom-cta .btn-primary {
-            font-size: 15px;
-            padding: 14px 32px;
-        }
-
-        .bottom-cta .card-book-call {
-            color: var(--red-mid);
-            margin-top: 16px;
-            font-size: 13px;
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 900px) {
-            .hero {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                padding: 40px 24px 48px;
-            }
-
-            .mp-pricing-card {
-                position: static;
-            }
-
-            .feat-layout {
-                flex-direction: column;
-            }
-
-            .feat-nav {
-                flex: none;
-                max-width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-                display: flex;
-                overflow-x: auto;
-            }
-
-            .feat-tab {
-                white-space: nowrap;
-                border-bottom: none;
-                border-right: 1px solid var(--border);
-            }
-
-            .feat-tab:last-child {
-                border-right: none;
-            }
-
-            .feat-tab-active {
-                border-left: none;
-                border-bottom: 3px solid var(--red);
-            }
-
-            .feat-tab-desc {
-                display: none;
-            }
-
-            .testimonial-section {
-                grid-template-columns: 1fr;
-                padding: 40px 24px;
-            }
-
-            .features-section {
-                padding: 40px 24px;
-            }
-
-            .bottom-cta {
-                padding: 48px 24px;
-            }
+            #layout-v1 .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 24px 48px; }
+            #layout-v1 .mp-pricing-card { position: static; }
+            #layout-v1 .feat-layout { flex-direction: column; }
+            #layout-v1 .feat-nav { flex: none; max-width: 100%; border-right: none; border-bottom: 1px solid var(--v1-border); display: flex; overflow-x: auto; }
+            #layout-v1 .feat-tab { white-space: nowrap; border-bottom: none; border-right: 1px solid var(--v1-border); }
+            #layout-v1 .feat-tab:last-child { border-right: none; }
+            #layout-v1 .feat-tab-active { border-left: none; border-bottom: 3px solid var(--v1-red); }
+            #layout-v1 .feat-tab-desc { display: none; }
+            #layout-v1 .testimonial-section { grid-template-columns: 1fr; padding: 40px 24px; }
+            #layout-v1 .features-section { padding: 40px 24px; }
+            #layout-v1 .bottom-cta { padding: 48px 24px; }
+        }
+        @media (max-width: 540px) {
+            #layout-v1 .stats-row { flex-wrap: wrap; }
+            #layout-v1 .stat { flex: 1 1 45%; }
+            #layout-v1 .hero-headline { font-size: 28px; }
         }
 
+        /* ===================== V2 LAYOUT STYLES (New C/D Design) ===================== */
+        :root {
+            --v2-white: #fbfafa;
+            --v2-black: #201f1b;
+            --v2-red: #a50f04;
+            --v2-rust: #b75337;
+            --v2-salmon: #d97c62;
+            --v2-brown: #523830;
+            --v2-gray-100: #f8f7f3;
+            --v2-gray-400: #aba89f;
+            --v2-gray-mid: #555555;
+            --v2-divider: #c6c4be;
+            --v2-font-heading: 'Lora', Georgia, serif;
+            --v2-font-body: 'Public Sans', 'Helvetica Neue', Arial, sans-serif;
+            --v2-font-accent: 'Courier Prime', 'Courier New', monospace;
+            --v2-font-alt: 'Roboto', Arial, sans-serif;
+            --v2-font-footer: 'Inter', Arial, sans-serif;
+            --v2-shadow-card: 0 3px 10px 0 rgba(171, 163, 159, 0.9);
+            --v2-shadow-price: 0 3px 5px rgba(171, 163, 159, 0.9);
+        }
+
+        #layout-v2 {
+            font-family: var(--v2-font-body);
+            background: var(--v2-white);
+            color: var(--v2-black);
+            -webkit-font-smoothing: antialiased;
+        }
+        #layout-v2 img { display: block; max-width: 100%; }
+        #layout-v2 a { color: inherit; text-decoration: none; }
+
+        #layout-v2 .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--v2-red); color: var(--v2-white);
+            font-family: var(--v2-font-body); font-weight: 700; font-size: 16px; line-height: 22.4px;
+            border: none; border-radius: 7px; padding: 10.5px 11px 10.9px;
+            cursor: pointer; width: 100%; transition: filter .15s ease;
+        }
+        #layout-v2 .btn:hover { filter: brightness(1.1); }
+
+        #layout-v2 .v2-hero {
+            position: relative;
+            background-color: var(--v2-white);
+            background-image: linear-gradient(135deg, rgba(251, 250, 250, 1) 0%, rgba(251, 250, 250, 1) 40%, rgba(225, 195, 175, 0.3) 70%, rgba(210, 170, 145, 0.4) 100%);
+        }
+        #layout-v2 .v2-hero__inner {
+            position: relative; max-width: 1280px; margin: 0 auto;
+            padding: 32px 0 40px;
+            display: grid; grid-template-columns: 1fr 1fr; min-height: 580px;
+        }
+        #layout-v2 .v2-hero__text {
+            display: flex; flex-direction: column; justify-content: flex-end; gap: 24px;
+            width: 520px; max-width: 100%; position: relative; z-index: 2; padding-bottom: 4px;
+            min-height: 580px;
+        }
+        #layout-v2 .v2-hero__logo { font-family: var(--v2-font-body); font-size: 32px; font-weight: 700; color: var(--v2-black); text-decoration: none; margin-bottom: 8px; }
+        #layout-v2 .v2-hero__logo span { color: var(--v2-red); }
+        #layout-v2 .v2-hero__headline {
+            font-family: var(--v2-font-heading); font-weight: 400;
+            font-size: 52px; line-height: 60px; color: var(--v2-black);
+        }
+        #layout-v2 .v2-hero__headline em { font-style: italic; color: var(--v2-red); }
+        #layout-v2 .v2-hero__image-col { position: relative; }
+        #layout-v2 .v2-hero__image-col img {
+            position: absolute; width: 817px; max-width: none; top: -182px; left: -96px;
+            pointer-events: none;
+        }
+
+        #layout-v2 .v2-price-card {
+            background: var(--v2-white); border-radius: 12px; box-shadow: var(--v2-shadow-price);
+            padding: 20px 20px; display: flex; flex-direction: column; gap: 12px;
+            width: 380px; max-width: 100%;
+        }
+        #layout-v2 .v2-price-card__badges { display: flex; justify-content: space-between; align-items: flex-start; }
+        #layout-v2 .v2-badge-offer {
+            background: var(--v2-brown); color: var(--v2-white); border-radius: 20px;
+            padding: 4px 12px; height: 30px; display: inline-flex; align-items: center;
+            font-weight: 600; font-size: 14px; line-height: 17.6px;
+        }
+        #layout-v2 .v2-badge-save {
+            border: 1px solid var(--v2-red); color: var(--v2-red); border-radius: 20px;
+            padding: 4px 12px; height: 30px; display: inline-flex; align-items: center;
+            font-weight: 700; font-size: 14px; line-height: 17.6px;
+        }
+        #layout-v2 .v2-price-card__name { font-weight: 700; font-size: 18px; line-height: 22px; }
+        #layout-v2 .v2-price-card__name em { font-style: normal; color: var(--v2-rust); }
+        #layout-v2 .v2-price-row { display: flex; align-items: flex-end; gap: 14px; padding-top: 1px; }
+        #layout-v2 .v2-price-amount { font-weight: 600; font-size: 38px; line-height: 34px; letter-spacing: -1.2px; }
+        #layout-v2 .v2-price-period { font-size: 18px; line-height: 19px; }
+        #layout-v2 .v2-price-was { font-size: 18px; line-height: 19px; color: var(--v2-gray-400); text-decoration: line-through; }
+        #layout-v2 .v2-price-note { font-style: italic; font-weight: 500; font-size: 14px; line-height: 21px; color: var(--v2-gray-400); }
+
+        #layout-v2 .v2-stats { padding: 80px 0 56px; }
+        #layout-v2 .v2-stats__inner { max-width: 1280px; margin: 0 auto; padding: 0; }
+        #layout-v2 .v2-stats__divider { border: none; border-top: 1.5px solid var(--v2-divider); margin-bottom: 36px; }
+        #layout-v2 .v2-stats__heading { font-weight: 700; font-size: 36px; line-height: 50px; margin-bottom: 24px; }
+        #layout-v2 .v2-stats__row { display: flex; justify-content: space-between; gap: 32px; }
+        #layout-v2 .v2-stat h3 { font-family: var(--v2-font-heading); font-weight: 400; font-size: 48px; line-height: 50px; }
+        #layout-v2 .v2-stat p { font-size: 18px; line-height: 30px; margin-top: 8px; }
+
+        #layout-v2 .v2-marquee { position: relative; height: 122px; background-color: #201f1b; overflow: hidden; }
+        #layout-v2 .v2-marquee__track { display: flex; align-items: center; height: 100%; width: max-content; animation: v2-marquee-scroll 45s linear infinite; }
+        #layout-v2 .v2-marquee__set { display: flex; align-items: center; gap: 50px; padding-right: 50px; }
+        #layout-v2 .v2-marquee__set img { flex: 0 0 auto; }
+        @keyframes v2-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        #layout-v2 .v2-marquee:hover .v2-marquee__track { animation-play-state: paused; }
+
+        #layout-v2 .v2-features { position: relative; padding: 0 80px 80px; }
+        #layout-v2 .v2-features__content { position: relative; display: flex; flex-direction: column; align-items: center; gap: 80px; padding-top: 80px; }
+        #layout-v2 .v2-features__headline { font-family: var(--v2-font-heading); font-weight: 400; font-size: 48px; line-height: 56px; text-align: center; }
+        #layout-v2 .v2-feature-card {
+            width: 1280px; max-width: 100%;
+            background: #fff; border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.12);
+            box-shadow: 0 16px 70px rgba(0,0,0,0.3), 0 6px 24px rgba(0,0,0,0.2);
+            padding: 32px; display: flex; align-items: center; gap: 32px;
+        }
+        #layout-v2 .v2-feature-card__media { width: 628px; height: 385px; flex: 0 0 auto; border-radius: 10px; overflow: hidden; background: #eceae5; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        #layout-v2 .v2-feature-card__media video { width: 100%; height: 100%; object-fit: cover; }
+        #layout-v2 .v2-feature-card__details { flex: 1; padding: 0 32px; }
+        #layout-v2 .v2-feature-card__label { font-family: var(--v2-font-accent); font-size: 16px; line-height: 21px; letter-spacing: 1.6px; text-transform: uppercase; }
+        #layout-v2 .v2-feature-card__title { font-weight: 700; font-size: 34px; line-height: 34px; margin: 5px 0 20px; }
+        #layout-v2 .v2-feature-card__body { font-size: 16px; line-height: 21px; margin-bottom: 20px; }
+        #layout-v2 .v2-feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        #layout-v2 .v2-feature-list li { position: relative; padding-left: 16px; font-size: 16px; line-height: 21px; }
+        #layout-v2 .v2-feature-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--v2-rust); }
+
+        #layout-v2 .v2-feature-carousel { width: 1280px; max-width: 100%; position: relative; }
+        #layout-v2 .v2-feature-carousel__track { display: flex; overflow: hidden; border-radius: 16px; }
+        #layout-v2 .v2-feature-carousel__slide { min-width: 100%; opacity: 0; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        #layout-v2 .v2-feature-carousel__slide.is-active { opacity: 1; position: relative; }
+        #layout-v2 .v2-feature-carousel__dots { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+        #layout-v2 .v2-feature-carousel__dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(183, 83, 55, 0.3); border: none; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+        #layout-v2 .v2-feature-carousel__dot:hover { background: rgba(183, 83, 55, 0.5); }
+        #layout-v2 .v2-feature-carousel__dot.is-active { background: var(--v2-rust); transform: scale(1.2); }
+        #layout-v2 .v2-feature-carousel__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background 0.2s ease; z-index: 10; }
+        #layout-v2 .v2-feature-carousel__nav:hover { background: #fff; }
+        #layout-v2 .v2-feature-carousel__nav--prev { left: -24px; }
+        #layout-v2 .v2-feature-carousel__nav--next { right: -24px; }
+        #layout-v2 .v2-feature-carousel__nav svg { width: 24px; height: 24px; }
+        #layout-v2 .v2-feature-carousel__nav--prev svg { transform: rotate(-90deg); }
+        #layout-v2 .v2-feature-carousel__nav--next svg { transform: rotate(90deg); }
+
+        #layout-v2 .v2-testimonials { background: linear-gradient(173.5deg, #1c0909 40.1%, #523830 135.8%); padding: 80px 144px; display: flex; flex-direction: column; gap: 64px; align-items: center; }
+        #layout-v2 .v2-testimonials__heading { font-family: var(--v2-font-heading); font-weight: 400; font-size: 48px; line-height: 50px; color: var(--v2-white); text-align: center; max-width: 902px; }
+        #layout-v2 .v2-testimonials__grid { display: flex; gap: 24px; width: 100%; max-width: 1152px; align-items: stretch; }
+        #layout-v2 .v2-t-card { flex: 1 1 0; border: 1px solid rgba(255,255,255,0.5); border-radius: 12px; padding: 32px 40px; display: flex; flex-direction: column; gap: 32px; align-items: center; background: linear-gradient(217.55deg, rgba(217,124,98,0.25) 3.04%, rgba(217,124,98,0) 43.07%), rgba(255, 255, 255, 0.1); }
+        #layout-v2 .v2-t-card__icon { width: 88px; height: 88px; }
+        #layout-v2 .v2-t-card__quote { color: var(--v2-white); font-size: 18px; line-height: 30px; text-align: center; flex: 1; }
+        #layout-v2 .v2-t-card__quote strong { color: var(--v2-salmon); font-weight: 900; }
+        #layout-v2 .v2-t-card__who { font-family: var(--v2-font-accent); font-size: 16px; line-height: 21px; color: #fff; text-align: center; }
+        #layout-v2 .v2-t-card__who b { font-weight: 700; display: block; }
+
+        #layout-v2 .v2-pricing { position: relative; padding: 80px 64px; background-color: #fff; }
+        #layout-v2 .v2-pricing__inner { max-width: 1280px; margin: 0 auto; display: flex; gap: 80px; align-items: flex-start; }
+        #layout-v2 .v2-pricing__headline-col { flex: 1 1 0; max-width: 768px; display: flex; flex-direction: column; gap: 24px; }
+        #layout-v2 .v2-pricing__headline { font-family: var(--v2-font-heading); font-weight: 400; font-size: 74px; line-height: 88px; }
+        #layout-v2 .v2-pricing__sub { font-weight: 700; font-size: 25px; line-height: 50px; }
+
+        #layout-v2 .v2-final-cta { position: relative; padding: 80px 64px; background-color: #2a1410; display: flex; flex-direction: column; align-items: center; gap: 32px; text-align: center; }
+        #layout-v2 .v2-final-cta__heading { font-family: var(--v2-font-heading); font-weight: 400; font-size: 48px; line-height: 56px; color: var(--v2-white); max-width: 756px; }
+        #layout-v2 .v2-final-cta__sub { color: var(--v2-white); font-size: 18px; line-height: 30px; max-width: 644px; }
+        #layout-v2 .v2-btn--invert { background: var(--v2-white); color: var(--v2-red); width: 228px; }
+
+        @media (max-width: 1280px) {
+            #layout-v2 .v2-hero__inner { padding-left: 40px; padding-right: 40px; }
+            #layout-v2 .v2-testimonials { padding: 80px 64px; }
+            #layout-v2 .v2-hero__headline { font-size: 46px; line-height: 54px; }
+            #layout-v2 .v2-feature-card__media { width: 46%; height: auto; aspect-ratio: 628 / 385; }
+        }
+        @media (max-width: 960px) {
+            #layout-v2 .v2-hero__inner { grid-template-columns: 1fr; min-height: 0; gap: 24px; padding: 24px 24px 32px; }
+            #layout-v2 .v2-hero__text { width: 100%; order: 0; text-align: center; min-height: 0; justify-content: flex-start; }
+            #layout-v2 .v2-hero__image-col { order: 1; max-width: 100%; margin: 0; }
+            #layout-v2 .v2-hero__image-col img { position: relative; top: 0; left: 0; width: 100%; max-width: 100%; }
+            #layout-v2 .v2-hero__logo { font-size: 24px; margin-bottom: 4px; }
+            #layout-v2 .v2-price-card { margin: 0 auto; width: 100%; max-width: 340px; }
+            #layout-v2 .v2-stats { padding: 40px 24px; }
+            #layout-v2 .v2-stats__row { flex-direction: column; gap: 24px; }
+            #layout-v2 .v2-features { padding: 40px 24px; }
+            #layout-v2 .v2-features__content { gap: 40px; padding-top: 0; }
+            #layout-v2 .v2-feature-card { flex-direction: column; padding: 24px; }
+            #layout-v2 .v2-feature-card__media { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+            #layout-v2 .v2-feature-card__details { padding: 0; margin-top: 20px; }
+            #layout-v2 .v2-feature-carousel__nav { display: none; }
+            #layout-v2 .v2-feature-carousel__dots { margin-top: 16px; }
+            #layout-v2 .v2-testimonials { padding: 40px 24px; gap: 32px; }
+            #layout-v2 .v2-testimonials__grid { flex-direction: column; }
+            #layout-v2 .v2-pricing { padding: 40px 24px; }
+            #layout-v2 .v2-pricing__inner { flex-direction: column; gap: 32px; }
+            #layout-v2 .v2-hero__headline { font-size: 28px; line-height: 36px; }
+            #layout-v2 .v2-features__headline, #layout-v2 .v2-testimonials__heading, #layout-v2 .v2-final-cta__heading { font-size: 28px; line-height: 36px; }
+            #layout-v2 .v2-pricing__headline { font-size: 36px; line-height: 44px; }
+            #layout-v2 .v2-final-cta { padding: 40px 24px; }
+        }
         @media (max-width: 540px) {
-            .stats-row {
-                flex-wrap: wrap;
-            }
-
-            .stat {
-                flex: 1 1 45%;
-            }
-
-            .hero-headline {
-                font-size: 28px;
-            }
+            #layout-v2 .v2-hero__inner { padding: 16px 16px 24px; gap: 16px; }
+            #layout-v2 .v2-hero__headline { font-size: 24px; line-height: 32px; }
+            #layout-v2 .v2-hero__logo { font-size: 20px; }
+            #layout-v2 .v2-hero__image-col { max-width: 100%; margin: 0 -16px; width: calc(100% + 32px); }
+            #layout-v2 .v2-price-card { padding: 14px 16px; gap: 10px; }
+            #layout-v2 .v2-price-amount { font-size: 28px; line-height: 28px; }
+            #layout-v2 .v2-price-card__name { font-size: 16px; }
+            #layout-v2 .v2-badge-offer, #layout-v2 .v2-badge-save { font-size: 12px; padding: 3px 10px; height: 26px; }
+            #layout-v2 .v2-stats { padding: 32px 16px; }
+            #layout-v2 .v2-stats__heading { font-size: 24px; line-height: 32px; }
+            #layout-v2 .v2-stat h3 { font-size: 32px; line-height: 36px; }
+            #layout-v2 .v2-stat p { font-size: 15px; }
+            #layout-v2 .v2-features { padding: 32px 16px; }
+            #layout-v2 .v2-features__headline { font-size: 24px; line-height: 32px; }
+            #layout-v2 .v2-feature-card { padding: 16px; }
+            #layout-v2 .v2-feature-card__title { font-size: 20px; line-height: 26px; }
+            #layout-v2 .v2-feature-card__body, #layout-v2 .v2-feature-list li { font-size: 14px; line-height: 20px; }
+            #layout-v2 .v2-testimonials { padding: 32px 16px; }
+            #layout-v2 .v2-testimonials__heading { font-size: 24px; line-height: 32px; }
+            #layout-v2 .v2-t-card { padding: 20px 16px; gap: 20px; }
+            #layout-v2 .v2-t-card__icon { width: 60px; height: 60px; }
+            #layout-v2 .v2-t-card__quote { font-size: 15px; line-height: 24px; }
+            #layout-v2 .v2-pricing { padding: 32px 16px; }
+            #layout-v2 .v2-pricing__headline { font-size: 28px; line-height: 36px; }
+            #layout-v2 .v2-pricing__sub { font-size: 18px; line-height: 28px; }
+            #layout-v2 .v2-final-cta { padding: 32px 16px; gap: 20px; }
+            #layout-v2 .v2-final-cta__heading { font-size: 24px; line-height: 32px; }
+            #layout-v2 .v2-final-cta__sub { font-size: 15px; }
         }
     </style>
 </head>
 <body style="margin:0;padding:0;">
-    <div id="mp-data-center">
-        <!-- HERO SECTION -->
-        <section class="hero">
-            <div>
-                <div class="eyebrow">
-                    <span class="eyebrow-dot"></span>
-                    New product
-                </div>
-                <h1 class="hero-headline">Every cut. <em>Every price move.</em></h1>
-                <p class="hero-sub">Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.</p>
 
-                <div class="stats-row">
-                    <div class="stat">
-                        <div class="stat-val">350+</div>
-                        <div class="stat-label">WHOLESALE CUTS</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-val">Daily</div>
-                        <div class="stat-label">USDA UPDATES</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-val">15+ years</div>
-                        <div class="stat-label">OF HISTORICAL DATA</div>
-                    </div>
-                </div>
-
-                <div class="cta-row">
-                    <button class="btn-primary" onclick="mpTrialClick(event)">Start 14-day free trial</button>
-                    <a href="#features" class="btn-ghost-link" onclick="smoothScrollTo('features')">See all features</a>
-                </div>
-
-                <div style="margin-top: 24px;">
-                    <a href="https://calendly.com/chris-meatingplace/30min" class="btn-ghost-link">Or book a call with our team to learn more</a>
-                </div>
+<!-- ===================== V1 LAYOUT (A/B Variants: control, speed) ===================== -->
+<div id="layout-v1">
+    <section class="hero">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> New product</div>
+            <h1 class="hero-headline">Every cut. <em>Every price move.</em></h1>
+            <p class="hero-sub">Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.</p>
+            <div class="stats-row">
+                <div class="stat"><div class="stat-val">350+</div><div class="stat-label">WHOLESALE CUTS</div></div>
+                <div class="stat"><div class="stat-val">Daily</div><div class="stat-label">USDA UPDATES</div></div>
+                <div class="stat"><div class="stat-val">15+ years</div><div class="stat-label">OF HISTORICAL DATA</div></div>
             </div>
-
-            <!-- PRICING CARD -->
-            <div class="mp-pricing-card">
-                <div class="founding-pill">Founding member pricing</div>
-                <div class="price-was">$3,999/year</div>
-                <div class="price-main">$999</div>
-                <div class="price-period">for your first year</div>
-                <div class="price-save">Save 75%</div>
-                <div class="price-deadline">Offer ends August 31st</div>
-
-                <button class="btn-cta-full" onclick="mpTrialClick(event)">Start 14-day free trial</button>
-                <div class="card-trust">30-day money-back guarantee</div>
-
-                <div class="card-divider"></div>
-
-                <div class="includes-label">Your subscription includes</div>
-                <div class="include-item">
-                    <div class="check-circle">
-                        <svg viewBox="0 0 12 9" fill="none">
-                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
-                        </svg>
-                    </div>
-                    Access to Meatingplace Data
-                </div>
-                <div class="include-item">
-                    <div class="check-circle">
-                        <svg viewBox="0 0 12 9" fill="none">
-                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
-                        </svg>
-                    </div>
-                    Daily Livestock Report premium newsletter
-                </div>
-                <div class="include-item">
-                    <div class="check-circle">
-                        <svg viewBox="0 0 12 9" fill="none">
-                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
-                        </svg>
-                    </div>
-                    Hales Cattle Letter premium newsletter
-                </div>
-                <div class="include-item">
-                    <div class="check-circle">
-                        <svg viewBox="0 0 12 9" fill="none">
-                            <path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/>
-                        </svg>
-                    </div>
-                    Meatingplace AI and historical archive
-                </div>
-
-                <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+            <div class="cta-row">
+                <button class="btn-primary" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+                <a href="#features-v1" class="btn-ghost-link" onclick="smoothScrollTo('features-v1')">See all features</a>
             </div>
-        </section>
-
-        <!-- FEATURES SECTION -->
-        <section class="features-section" id="features">
-            <div class="features-inner">
-                <div class="section-eyebrow">Features</div>
-                <h2 class="section-title">One dashboard. Everything you need.</h2>
-
-                <div class="feat-layout">
-                    <div class="feat-nav">
-                        <div class="feat-tab feat-tab-active" onclick="showFeatureTab('cuts')">
-                            <div class="feat-tab-title">My Cuts</div>
-                            <div class="feat-tab-desc">Personalized dashboard for the cuts you trade.</div>
-                        </div>
-                        <div class="feat-tab" onclick="showFeatureTab('alerts')">
-                            <div class="feat-tab-title">Price Alerts</div>
-                            <div class="feat-tab-desc">Get notified when prices cross your thresholds.</div>
-                        </div>
-                        <div class="feat-tab" onclick="showFeatureTab('prices')">
-                            <div class="feat-tab-title">Daily USDA Prices</div>
-                            <div class="feat-tab-desc">350+ cuts, 5 proteins, updated daily.</div>
-                        </div>
-                        <div class="feat-tab" onclick="showFeatureTab('history')">
-                            <div class="feat-tab-title">4-Year Historical</div>
-                            <div class="feat-tab-desc">Spot seasonality, time contracts.</div>
-                        </div>
-                        <div class="feat-tab" onclick="showFeatureTab('storage')">
-                            <div class="feat-tab-title">Cold Storage</div>
-                            <div class="feat-tab-desc">Inventory levels + supply signals.</div>
-                        </div>
-                        <div class="feat-tab" onclick="showFeatureTab('trade')">
-                            <div class="feat-tab-title">Trade Data</div>
-                            <div class="feat-tab-desc">Import/export volumes by protein.</div>
-                        </div>
-                    </div>
-
-                    <div class="feat-display">
-                        <div id="feat-panel-cuts" class="feat-panel" style="display: block;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/my-cuts-dashboard.png" alt="My Cuts">
-                        </div>
-                        <div id="feat-panel-alerts" class="feat-panel" style="display: none;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/price-alerts.png" alt="Price Alerts">
-                        </div>
-                        <div id="feat-panel-prices" class="feat-panel" style="display: none;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/short-range-chart.jpg" alt="Short Range">
-                        </div>
-                        <div id="feat-panel-history" class="feat-panel" style="display: none;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/long-range-chart.png" alt="Long Range">
-                        </div>
-                        <div id="feat-panel-storage" class="feat-panel" style="display: none;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/cold-storage.png" alt="Cold Storage">
-                        </div>
-                        <div id="feat-panel-trade" class="feat-panel" style="display: none;">
-                            <img src="https://meatingplace.com/wp-content/uploads/2026/03/trade-data.png" alt="Trade Data">
-                        </div>
-                    </div>
+            <div style="margin-top: 24px;">
+                <a href="https://calendly.com/chris-meatingplace/30min" class="btn-ghost-link">Or book a call with our team to learn more</a>
+            </div>
+        </div>
+        <div class="mp-pricing-card">
+            <div class="founding-pill">Founding member pricing</div>
+            <div class="price-was">$3,999/year</div>
+            <div class="price-main">$999</div>
+            <div class="price-period">for your first year</div>
+            <div class="price-save">Save 75%</div>
+            <div class="price-deadline">Offer ends August 31st</div>
+            <button class="btn-cta-full" onclick="mpTrialClick(event)">Start 14-day free trial</button>
+            <div class="card-trust">30-day money-back guarantee</div>
+            <div class="card-divider"></div>
+            <div class="includes-label">Your subscription includes</div>
+            <div class="include-item"><div class="check-circle"><svg viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/></svg></div>Access to Meatingplace Data</div>
+            <div class="include-item"><div class="check-circle"><svg viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/></svg></div>Daily Livestock Report premium newsletter</div>
+            <div class="include-item"><div class="check-circle"><svg viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/></svg></div>Hales Cattle Letter premium newsletter</div>
+            <div class="include-item"><div class="check-circle"><svg viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.5 8l6-6" stroke="currentColor"/></svg></div>Meatingplace AI and historical archive</div>
+            <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+        </div>
+    </section>
+    <section class="features-section" id="features-v1">
+        <div class="features-inner">
+            <div class="section-eyebrow">Features</div>
+            <h2 class="section-title">One dashboard. Everything you need.</h2>
+            <div class="feat-layout">
+                <div class="feat-nav">
+                    <div class="feat-tab feat-tab-active" onclick="showFeatureTab('cuts')"><div class="feat-tab-title">My Cuts</div><div class="feat-tab-desc">Personalized dashboard for the cuts you trade.</div></div>
+                    <div class="feat-tab" onclick="showFeatureTab('alerts')"><div class="feat-tab-title">Price Alerts</div><div class="feat-tab-desc">Get notified when prices cross your thresholds.</div></div>
+                    <div class="feat-tab" onclick="showFeatureTab('prices')"><div class="feat-tab-title">Daily USDA Prices</div><div class="feat-tab-desc">350+ cuts, 5 proteins, updated daily.</div></div>
+                    <div class="feat-tab" onclick="showFeatureTab('history')"><div class="feat-tab-title">4-Year Historical</div><div class="feat-tab-desc">Spot seasonality, time contracts.</div></div>
+                    <div class="feat-tab" onclick="showFeatureTab('storage')"><div class="feat-tab-title">Cold Storage</div><div class="feat-tab-desc">Inventory levels + supply signals.</div></div>
+                    <div class="feat-tab" onclick="showFeatureTab('trade')"><div class="feat-tab-title">Trade Data</div><div class="feat-tab-desc">Import/export volumes by protein.</div></div>
+                </div>
+                <div class="feat-display">
+                    <div id="feat-panel-cuts" class="feat-panel" style="display: block;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/my-cuts-dashboard.png" alt="My Cuts"></div>
+                    <div id="feat-panel-alerts" class="feat-panel" style="display: none;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/price-alerts.png" alt="Price Alerts"></div>
+                    <div id="feat-panel-prices" class="feat-panel" style="display: none;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/short-range-chart.jpg" alt="Short Range"></div>
+                    <div id="feat-panel-history" class="feat-panel" style="display: none;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/long-range-chart.png" alt="Long Range"></div>
+                    <div id="feat-panel-storage" class="feat-panel" style="display: none;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/cold-storage.png" alt="Cold Storage"></div>
+                    <div id="feat-panel-trade" class="feat-panel" style="display: none;"><img src="https://meatingplace.com/wp-content/uploads/2026/03/trade-data.png" alt="Trade Data"></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+    <section class="testimonial-section">
+        <div class="testimonial-card"><div class="testimonial-quote">"One stop, one shop. I can go look at anything. I can draw the correlations."</div><div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div></div>
+        <div class="testimonial-card"><div class="testimonial-quote">"We pay $3,000 to $5,000 a month for something similar."</div><div class="testimonial-attr"><strong>Senior Buyer</strong>Regional Producer</div></div>
+        <div class="testimonial-card"><div class="testimonial-quote">"The hook is the AI's ability to answer questions."</div><div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div></div>
+        <div class="testimonial-card"><div class="testimonial-quote">"With our current set-up, it's so cumbersome."</div><div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div></div>
+        <div class="testimonial-card"><div class="testimonial-quote">"It brings all my fragmented reports together — that's why I like this."</div><div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div></div>
+        <div class="testimonial-card"><div class="testimonial-quote">"Being able to toggle and set specific items to watch... that's right on the money."</div><div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div></div>
+    </section>
+    <section class="bottom-cta">
+        <div class="bottom-cta-inner">
+            <h2>Start your free trial today.</h2>
+            <p>$999 for your first year. Offer ends August 31st.</p>
+            <button class="btn-primary" onclick="mpTrialClick(event)" style="margin: 0 auto;">Start 14-day free trial</button>
+            <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+        </div>
+    </section>
+</div>
 
-        <!-- TESTIMONIALS SECTION -->
-        <section class="testimonial-section">
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"One stop, one shop. I can go look at anything. I can draw the correlations."</div>
-                <div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"We pay $3,000 to $5,000 a month for something similar."</div>
-                <div class="testimonial-attr"><strong>Senior Buyer</strong>Regional Producer</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"The hook is the AI's ability to answer questions."</div>
-                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"With our current set-up, it's so cumbersome."</div>
-                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"It brings all my fragmented reports together — that's why I like this."</div>
-                <div class="testimonial-attr"><strong>Senior Buyer</strong>National Producer</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-quote">"Being able to toggle and set specific items to watch... that's right on the money."</div>
-                <div class="testimonial-attr"><strong>VP</strong>Regional Distributor</div>
-            </div>
-        </section>
+<!-- ===================== V2 LAYOUT (C/D Variants: control_v2, speed_v2) ===================== -->
+<div id="layout-v2">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+        <symbol id="i-quote1" viewBox="0 0 88 88"><path d="M13.512 56.6286C11.8536 52.6248 11 48.3336 11 44C11 39.6664 11.8536 35.3752 13.512 31.3714C15.1704 27.3677 17.6011 23.7298 20.6655 20.6655C23.7298 17.6011 27.3677 15.1704 31.3714 13.512C35.3752 11.8536 39.6664 11 44 11C48.3336 11 52.6248 11.8536 56.6286 13.512C60.6323 15.1704 64.2702 17.6011 67.3345 20.6655C70.3989 23.7298 72.8296 27.3677 74.488 31.3714C76.1464 35.3752 77 39.6664 77 44C77 48.3336 76.1464 52.6248 74.488 56.6286C72.8296 60.6323 70.3989 64.2702 67.3345 67.3345C64.2702 70.3989 60.6323 72.8296 56.6286 74.488C52.6248 76.1464 48.3336 77 44 77C39.6664 77 35.3752 76.1464 31.3714 74.488C27.3677 72.8296 23.7298 70.3989 20.6655 67.3345C17.6011 64.2702 15.1704 60.6323 13.512 56.6286Z" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 44H56.8333" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 25.6667V44.0001" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+        <symbol id="i-quote2" viewBox="0 0 88 88"><path d="M13.512 56.6286C11.8536 52.6248 11 48.3336 11 44C11 39.6664 11.8536 35.3752 13.512 31.3714C15.1704 27.3677 17.6011 23.7298 20.6655 20.6655C23.7298 17.6011 27.3677 15.1704 31.3714 13.512C35.3752 11.8536 39.6664 11 44 11C48.3336 11 52.6248 11.8536 56.6286 13.512C60.6323 15.1704 64.2702 17.6011 67.3345 20.6655C70.3989 23.7298 72.8296 27.3677 74.488 31.3714C76.1464 35.3752 77 39.6664 77 44C77 48.3336 76.1464 52.6248 74.488 56.6286C72.8296 60.6323 70.3989 64.2702 67.3345 67.3345C64.2702 70.3989 60.6323 72.8296 56.6286 74.488C52.6248 76.1464 48.3336 77 44 77C39.6664 77 35.3752 76.1464 31.3714 74.488C27.3677 72.8296 23.7298 70.3989 20.6655 67.3345C17.6011 64.2702 15.1704 60.6323 13.512 56.6286Z" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M54.2667 32.9999C53.6024 31.8477 52.6374 30.8978 51.4748 30.2519C50.3122 29.6061 48.9959 29.2885 47.6667 29.3333H40.3333C38.3884 29.3333 36.5232 30.1059 35.1479 31.4811C33.7726 32.8564 33 34.7217 33 36.6666C33 38.6115 33.7726 40.4768 35.1479 41.852C36.5232 43.2273 38.3884 43.9999 40.3333 43.9999H47.6667C49.6116 43.9999 51.4768 44.7725 52.8521 46.1478C54.2274 47.5231 55 49.3883 55 51.3333C55 53.2782 54.2274 55.1434 52.8521 56.5187C51.4768 57.894 49.6116 58.6666 47.6667 58.6666H40.3333C39.0041 58.7113 37.6878 58.3938 36.5252 57.7479C35.3626 57.102 34.3976 56.1521 33.7333 54.9999" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 25.6667V62.3334" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+        <symbol id="i-quote3" viewBox="0 0 88 88"><path d="M11 11V77H77" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M73.3334 66V77" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M58.6666 58.6667V77.0001" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 47.6667V77.0001" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M29.3334 58.6667V77.0001" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 40.3333C33 40.3333 29.3333 22 44 22C58.6667 22 55 40.3333 77 40.3333" stroke="#D97C62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 32 32"><path d="M15.9999 11.606C16.1249 11.606 16.2252 11.6438 16.3319 11.7505L22.9247 18.3423C23.0339 18.4515 23.0692 18.5502 23.0692 18.6665C23.0692 18.7828 23.0338 18.8815 22.9247 18.9907C22.8206 19.0948 22.7182 19.1352 22.5839 19.1353C22.4493 19.1353 22.3462 19.0949 22.2421 18.9907L22.2411 18.9897L16.4706 13.2515L15.9989 12.7827L9.75769 19.0239C9.65404 19.1276 9.5654 19.1567 9.45789 19.1528C9.3322 19.1482 9.22399 19.1055 9.10925 18.9907C9.00511 18.8866 8.96472 18.7844 8.96472 18.6499C8.96473 18.5154 9.0051 18.4132 9.10925 18.3091L15.6678 11.7505C15.7746 11.6437 15.8748 11.606 15.9999 11.606Z" fill="#B0867B" stroke="#B0867B" stroke-width="1.33333"/></symbol>
+        <symbol id="i-smithfield" viewBox="0 0 182 40"><path fill-rule="evenodd" clip-rule="evenodd" d="M169.151 27.8298H176.991V23.3021H175.239V4.81055H166.409V9.33826H168.799V13.7694C167.397 12.5906 165.772 11.7616 163.987 11.7616C158.886 11.7616 156.527 15.3327 156.527 20.0827C156.527 24.2915 159.205 28.34 163.732 28.34C165.899 28.4366 167.684 27.5748 169.151 25.9805V27.8298ZM166.122 22.8248C164.464 22.8248 163.189 21.5165 163.189 19.8585C163.189 18.2662 164.497 16.8613 166.122 16.8613C167.748 16.8613 169.151 18.2024 169.151 19.8585C169.151 21.5165 167.748 22.8248 166.122 22.8248Z" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M21.7547 11.2827V4.81095H16.0167V6.56367C14.1698 4.84186 12.4155 4.30078 9.96192 4.30078C4.28771 4.30078 1.13086 7.87194 1.13086 11.6016C1.13086 16.5428 4.79775 17.9786 8.46271 18.713C12.1296 19.4454 15.7945 19.4454 15.7945 21.486C15.7945 23.0474 14.0403 23.3663 12.543 23.3663C11.492 23.3663 10.5357 23.1441 9.73781 22.6977C8.94183 22.2513 8.27144 21.5498 7.79424 20.5932H1.92876V27.8302H7.63389V25.9809C9.19685 27.7993 11.5558 28.3404 13.7544 28.3404C18.6944 28.3404 22.456 25.6949 22.456 20.5932C22.456 15.364 18.822 13.8335 15.1879 13.1011C11.5558 12.3668 7.92175 12.4306 7.92175 10.4228C7.92175 9.17827 9.45188 8.76473 10.727 8.76473C11.9692 8.76473 12.9893 8.98696 13.8491 9.43336C14.7107 9.87975 15.412 10.4865 15.9858 11.2827" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M31.4102 12.272H23.9199V16.7978H25.6104V23.3024H23.9199V27.8301H33.7382V23.3024H32.0477V18.4577C32.0477 16.9581 32.9403 16.5755 33.9604 16.5755C35.1717 16.5755 35.7784 17.0528 35.7784 18.4577V27.8301H43.9062V23.3024H42.2177V18.4577C42.2177 16.8306 42.9827 16.5427 44.0337 16.5427C45.2779 16.5427 45.9464 17.0528 45.9464 18.3611V27.8301H54.0742V23.3024H52.3856V16.7978C52.3856 13.2923 50.4401 11.7618 47.4765 11.7618C45.4054 11.7618 43.4928 12.4942 41.9626 13.93C40.7822 12.3995 39.3158 11.698 37.3085 11.7618C35.0771 11.7289 32.9094 12.5908 31.4102 14.2798" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M65.8471 23.3038H64.0291V12.2734H55.8047V16.7992H57.5898V23.3038H55.8047V27.8316H65.8471" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M125.57 23.3038H123.752V12.2734H115.527V16.9229H117.312V23.3038H115.527V27.8316H125.57" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M78.5501 9.33826H80.2715V23.3021H78.4863V27.8298H88.5287V23.3021H86.7107V18.5522C86.7107 16.639 88.1134 16.3202 89.0388 16.3202C89.9951 16.3202 91.1099 16.639 91.1099 18.5522V27.8298H99.5893V23.3021H97.7404V16.1598C97.7404 13.866 97.0082 11.7616 92.6091 11.7616C90.9611 11.7616 89.5082 11.9413 86.7107 12.9365V4.81055H78.5501" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M138.692 22.9197C138.119 23.8762 137.098 24.3226 136.015 24.3226C133.942 24.3226 132.891 23.2385 132.954 21.3254H144.813C144.813 15.0449 142.294 11.7617 135.76 11.7617C130.595 11.7617 126.293 14.6623 126.293 20.1775C126.293 24.2588 128.747 28.3402 136.301 28.3402C139.394 28.3402 142.964 27.0648 144.27 24.0366L138.692 22.9197ZM132.858 18.7765C132.858 17.0856 133.878 15.6517 135.982 15.6517C137.991 15.6517 138.66 16.9581 138.66 18.7765" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M145.57 9.33826H147.516V23.3021H145.57V27.8298H155.771V23.3021H153.955V4.81055H145.57" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M60.5474 10.4664C58.5594 10.4664 57.0293 8.89727 57.0293 6.90878C57.0293 4.99566 58.5961 3.3125 60.5474 3.3125C62.4987 3.3125 64.1815 4.91836 64.1815 6.90878C64.1815 8.89727 62.4987 10.4664 60.5474 10.4664Z" fill="#FBFAFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M74.4955 5.35352V12.2736H76.6632V16.7994H74.4955V21.5184C74.4955 22.7629 74.8143 22.9542 75.7378 22.9542H76.6632V27.8317H71.9453C69.3951 27.8317 68.0563 26.6529 68.0563 24.133V16.7994H66.2383V12.2736H68.0563V8.26571C70.1254 8.26571 71.6594 7.15455 72.0825 5.35352" fill="#FBFAFA"/><path d="M111.979 9.82654C111.67 10.6903 111.401 11.6044 111.19 12.2904H113.87V16.9302H110.19C108.698 22.1092 107.585 26.0803 106.588 29.0872C105.646 31.9337 104.784 33.6826 103.58 35.3677C101.745 37.9398 98.7678 38.7069 96.4707 38.8364C95.0681 38.9156 93.0704 38.5176 92.3672 37.8586L93.7485 34.6121C94.1427 34.7435 94.6257 34.786 95.1087 34.786C96.2485 34.786 97.5217 34.3918 98.4877 33.1183C99.5831 31.7154 100.114 30.0747 101.003 27.0968C102.35 22.5826 103.878 16.9302 103.878 16.9302H100.041V12.2904H105.207C105.601 11.1483 106.281 9.54053 106.95 8.01777C106.95 8.01777 107.703 6.45442 108.951 4.90073C110.255 3.28134 111.716 1.97694 113.955 1.42426C115.723 0.985591 117.176 1.12086 118.53 1.54793C120.199 2.07356 121.358 3.31806 122.04 4.45627C122.709 5.56936 123.049 7.2873 122.55 8.60716C122.054 9.92702 120.817 10.6691 119.766 10.5454C118.715 10.4217 117.838 9.81108 117.448 8.99945C117.046 8.16463 117.232 7.23706 117.355 6.9897C117.479 6.74235 117.85 6.37132 117.85 6.37132C117.85 6.37132 117.788 5.93845 117.294 5.6911C117.004 5.54617 115.839 5.21572 114.448 6.26697C113.057 7.31822 112.415 8.61296 111.979 9.82654Z" fill="#FBFAFA"/><path d="M179.062 5.11914C178.018 5.11914 177.191 5.83801 177.191 6.73467C177.191 7.63905 178.003 8.36565 179.031 8.36565C180.043 8.36565 180.87 7.63905 180.87 6.7424C180.87 5.8612 180.043 5.11914 179.062 5.11914ZM179.007 5.35103C179.888 5.35103 180.584 5.96169 180.584 6.73467C180.584 7.53856 179.896 8.16468 179.031 8.16468C178.165 8.16468 177.47 7.53856 177.47 6.75013C177.47 5.98488 178.165 5.35103 179.007 5.35103ZM178.327 7.64678H178.691V6.90472C178.722 6.91245 178.745 6.91245 178.776 6.91245C178.83 6.91245 178.861 6.91245 178.922 6.89699C179.332 7.55402 179.463 7.66224 179.858 7.66224C179.943 7.66224 179.989 7.66224 179.989 7.64678L180.02 7.55402C179.765 7.50764 179.641 7.3917 179.255 6.81969C179.548 6.72694 179.695 6.54915 179.695 6.32499C179.695 6.15493 179.603 6.00034 179.471 5.92304C179.363 5.8612 179.216 5.83028 178.907 5.83028C178.845 5.83028 178.791 5.83028 178.66 5.83801C178.505 5.84574 178.474 5.84574 178.327 5.84574V7.64678ZM178.691 6.04671C178.76 6.03899 178.83 6.03899 178.892 6.03899C179.193 6.03899 179.317 6.12401 179.317 6.35591C179.317 6.60326 179.162 6.71148 178.822 6.71148C178.768 6.71148 178.737 6.71148 178.691 6.70375V6.04671Z" fill="#FBFAFA"/></symbol>
+        <symbol id="i-hormel" viewBox="0 0 112 57"><path d="M10.4638 54.3464C12.2968 56.6984 15.9362 57.0738 20.9077 55.1734C52.2262 43.1936 67.3442 38.1158 102.395 30.7721C103.009 30.6431 103.409 30.0824 103.307 29.4969C103.079 28.2085 102.11 27.5717 97.3818 28.526C70.9836 33.8469 48.41 38.5161 10.9861 52.6577C10.2705 52.9273 10.0093 53.7642 10.4638 54.3481V54.3464Z" fill="#FBFAFA"/><path d="M29.2956 41.1757C32.7466 40.9822 36.1761 37.8429 38.5693 34.0271C38.4949 36.3229 39.6667 37.5352 41.9195 37.7387C42.4302 37.785 42.883 37.4327 42.9706 36.9365C44.1854 30.094 44.9986 28.3043 46.1787 24.3646C48.0711 19.0321 50.2693 18.3887 50.5652 20.2213C50.6643 20.8333 51.8708 21.1591 52.841 19.2504C54.2459 16.485 53.1931 13.6285 51.1651 13.8072C49.795 13.9279 48.4926 16.0566 47.4166 18.6004C47.6447 16.2931 46.7886 15.4297 45.4564 15.4661C44.5953 15.4909 43.6731 15.7638 43.0252 16.007C42.6583 16.1442 42.45 16.5313 42.5326 16.915C42.7062 17.7238 42.6203 18.9345 42.0451 20.8035H42.055C41.6087 22.3351 41.1294 23.9378 40.6749 25.4793C40.665 25.4893 40.6518 25.519 40.6353 25.5753C37.6008 36.0814 28.3237 39.788 28.6725 33.8816C33.849 33.4036 38.2834 26.7777 38.085 23.2432C37.928 20.4479 36.0786 18.5839 33.7845 18.7129C31.1351 18.8617 27.3899 21.3245 24.9107 28.999C23.4844 33.4119 22.6448 41.5511 29.2939 41.1757H29.2956ZM34.3778 22.5567C35.5315 23.4201 32.6937 29.9137 29.198 30.9904C30.3186 26.6901 33.4242 21.8439 34.3778 22.5567ZM1.64623 25.9838C2.05612 26.3113 2.59658 26.3361 2.9668 26.0483C4.70387 24.6987 6.84422 22.4889 9.28042 20.8052C7.50037 26.5214 3.28414 40.5852 2.48419 44.2719C1.71896 47.8048 3.10894 49.5928 6.02775 49.8674C6.58804 49.9203 7.09544 49.5283 7.20453 48.9759C8.0524 44.6987 8.96639 41.1872 9.8969 37.9702C10.4555 38.0563 11.0191 38.0761 11.5827 38.0331C17.7228 37.5749 25.3008 30.5703 24.8694 22.1697C24.6066 17.039 20.3887 13.7493 15.3263 14.0338C8.95812 14.3927 3.18828 18.5061 0.730596 20.8515C-0.705668 22.2226 0.176915 24.8128 1.64293 25.9855L1.64623 25.9838ZM10.9646 34.4009C11.667 32.1052 12.3695 29.8723 13.0487 27.5038C14.1726 23.5921 15.5709 19.8856 12.0538 19.2422C13.0339 18.827 14.0487 18.5541 15.0949 18.4946C23.5075 18.0215 18.7756 33.1439 10.9646 34.3993V34.4009ZM78.2508 23.397C76.6939 23.4846 77.2393 20.0328 80.0143 11.2766C81.5911 5.83825 77.3716 6.7711 75.5122 7.46743C75.1453 7.60471 74.937 7.99174 75.0196 8.37547C75.18 9.12142 75.1188 10.2114 74.656 11.8455C74.2511 13.1687 73.7982 14.6375 73.2859 16.2997L73.2809 16.2898C73.2148 16.5214 73.1421 16.7645 73.0644 17.0159C73.0644 17.0175 73.0644 17.0192 73.0644 17.0209C73.0628 17.0291 73.0595 17.0357 73.0578 17.044C71.8562 20.9656 69.4845 27.1118 67.4218 27.2276C64.5609 27.388 70.2167 8.94444 71.1935 4.76813C72.0546 1.2104 70.8249 0.393333 69.2118 0.43799C68.3507 0.4628 67.4284 0.735708 66.7806 0.978844C66.4136 1.11612 66.2054 1.50316 66.288 1.88688C66.407 2.44097 66.4037 3.18526 66.2054 4.20246C65.3988 7.31526 64.6898 10.1386 63.7758 13.8882C63.3775 12.2524 62.2255 11.3196 60.7016 11.4056C55.4144 11.7033 51.699 22.0854 52.0692 28.6815C52.2576 32.0308 53.6972 34.4191 56.697 33.9527C59.0968 33.5789 60.8041 30.9689 61.9115 27.9454C62.2255 30.2842 63.3246 31.7016 65.1625 31.5991C67.3359 31.4767 69.8448 29.6408 72.0116 25.3057C72.3917 27.2855 73.5602 28.5938 76.0212 28.4565C77.6542 28.3639 80.021 27.0027 82.3811 22.0424C82.7051 24.6044 84.0984 25.9855 86.0371 25.8763C88.3361 25.7473 91.2351 23.5359 93.0762 19.0255C93.6845 21.1327 95.1588 22.6345 98.1007 22.4691C102.786 22.2044 107.497 17.1978 109.561 11.7546C109.799 11.1277 109.791 10.6117 109.626 10.2412C109.293 9.50183 108.68 9.59446 108.29 10.2494C102.755 19.5349 97.5784 18.8717 97.4809 15.175C102.657 14.697 107.092 8.07114 106.893 4.53657C106.736 1.74133 104.887 -0.122711 102.593 0.00629966C99.9435 0.155158 96.1983 2.61794 93.7192 10.2924C93.4762 11.045 93.2498 11.9067 93.0746 12.8164C92.1457 16.5594 89.9294 21.7248 87.8221 21.8439C85.6222 21.9679 88.3543 13.1588 89.5145 10.223C90.602 7.46578 91.1078 3.96263 86.7197 3.97917C86.199 3.98083 85.7478 4.3414 85.6371 4.85083C84.4752 10.1634 80.5019 23.2795 78.2508 23.4052M103.185 3.8452C104.338 4.70858 101.5 11.2021 98.0048 12.2789C99.1254 7.97851 102.231 3.13233 103.185 3.8452ZM58.2142 29.2107C57.7299 29.2306 57.1531 28.7923 57.2093 26.9282C57.3779 21.4271 59.6984 15.3536 61.4322 15.2561C62.5197 15.1949 62.9527 17.6229 61.9858 21.2782L61.9991 21.2484C60.7892 26.0185 59.7034 29.1495 58.2142 29.2107Z" fill="white"/><path d="M109.525 19.1595C109.781 19.0834 110.035 19.0718 110.29 19.1247C110.543 19.1777 110.764 19.2918 110.954 19.4671C111.144 19.6424 111.278 19.8608 111.354 20.1204C111.432 20.3818 111.44 20.6365 111.379 20.8862C111.32 21.1343 111.196 21.3527 111.012 21.5362C110.829 21.7215 110.606 21.8522 110.345 21.9299C110.085 22.006 109.829 22.0176 109.576 21.9646C109.323 21.9117 109.102 21.7959 108.912 21.6173C108.723 21.4403 108.589 21.222 108.513 20.9623C108.437 20.7026 108.429 20.4496 108.492 20.2015C108.555 19.9534 108.677 19.7367 108.86 19.5531C109.044 19.3679 109.267 19.2372 109.525 19.1611V19.1595ZM108.89 20.8498C108.979 21.1542 109.155 21.3824 109.412 21.5362C109.672 21.6901 109.953 21.7231 110.255 21.6322C110.551 21.5445 110.768 21.3659 110.905 21.0946C111.042 20.825 111.065 20.5372 110.974 20.2296C110.887 19.9302 110.713 19.7036 110.454 19.5498C110.194 19.396 109.911 19.3646 109.606 19.4539C109.312 19.5415 109.097 19.7169 108.956 19.9798C108.817 20.2445 108.794 20.5323 108.887 20.8465L108.89 20.8498ZM109.764 19.745C109.968 19.6904 110.13 19.6871 110.249 19.7334C110.368 19.7797 110.449 19.8839 110.492 20.046C110.559 20.2991 110.46 20.476 110.194 20.5736L110.794 21.1442L110.47 21.2319L109.911 20.6662L109.718 20.7175L109.897 21.3857L109.588 21.4684L109.169 19.9054L109.766 19.745H109.764ZM109.946 20.3966C110.055 20.3669 110.125 20.3288 110.156 20.2825C110.187 20.2362 110.192 20.1767 110.173 20.1022C110.136 19.9732 110.014 19.9385 109.802 19.9964L109.538 20.0692L109.652 20.4793L109.946 20.3983V20.3966Z" fill="white"/></symbol>
+    </svg>
 
-        <!-- BOTTOM CTA -->
-        <section class="bottom-cta">
-            <div class="bottom-cta-inner">
-                <h2>Start your free trial today.</h2>
-                <p>$999 for your first year. Offer ends August 31st.</p>
-                <button class="btn-primary" onclick="mpTrialClick(event)" style="margin: 0 auto;">Start 14-day free trial</button>
-                <a href="https://calendly.com/chris-meatingplace/30min" class="card-book-call">Book a call with our team →</a>
+    <header class="v2-hero">
+        <div class="v2-hero__inner">
+            <div class="v2-hero__text">
+                <a class="v2-hero__logo" href="#" aria-label="Meatingplace Data">Meatingplace <span>Data</span></a>
+                <h1 class="v2-hero__headline">Your morning market check<br>&mdash; <em>done in 30 seconds.</em></h1>
+                <div class="v2-price-card">
+                    <div class="v2-price-card__badges">
+                        <span class="v2-badge-offer">Limited Time Offer</span>
+                        <span class="v2-badge-save">Save 75%</span>
+                    </div>
+                    <div class="v2-price-card__name">Meatingplace <em>Data</em></div>
+                    <div>
+                        <div class="v2-price-row">
+                            <span class="v2-price-amount">$999</span>
+                            <span class="v2-price-period">/year</span>
+                            <span class="v2-price-was">$3,999/year</span>
+                        </div>
+                        <div class="v2-price-note" style="margin-top:8px;">for your first year</div>
+                    </div>
+                    <button class="btn" onclick="mpTrialClick(event)">Start Free Trial</button>
+                </div>
             </div>
-        </section>
+            <div class="v2-hero__image-col">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=1634,format=auto,onerror=redirect,quality=80/uploads/asset/file/9df4ac64-87ca-4e94-a7d5-a42aaab96ad6/84bc523b-22c3-40d2-a513-3f03a7de2939.png?t=1785878039" alt="Laptop showing the Meatingplace Data dashboard">
+            </div>
+        </div>
+        <div class="v2-stats">
+            <div class="v2-stats__inner" style="padding: 0 80px;">
+                <hr class="v2-stats__divider">
+                <h2 class="v2-stats__heading">The Meat Industry's Trusted Source</h2>
+                <div class="v2-stats__row">
+                    <div class="v2-stat"><h3>30+ Years</h3><p>Serving the industry</p></div>
+                    <div class="v2-stat"><h3>USDA-Sourced</h3><p>Pricing data</p></div>
+                    <div class="v2-stat"><h3>13x Award Winner</h3><p>Jesse H. Neal awards</p></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="v2-marquee">
+        <div class="v2-marquee__track">
+            <div class="v2-marquee__set">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=210,format=auto,onerror=redirect,quality=85/uploads/asset/file/f8eaa0c7-bba6-4a74-95c0-a2f5bba1d1b5/4a526b0b-3538-47cb-89fc-b497a93d4c21.png?t=1785878174" alt="Tyson Foods" style="width:105px;height:50px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=232,format=auto,onerror=redirect,quality=85/uploads/asset/file/32bdbc18-5976-4993-a76e-76292a56a4da/c764faad-a6d0-4cfd-83e7-a832c0ebf0b3.png?t=1785878176" alt="Cargill" style="width:112px;height:50px;object-fit:contain;">
+                <svg style="width:182px;height:40px;" role="img"><use href="#i-smithfield"/></svg>
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=156,format=auto,onerror=redirect,quality=85/uploads/asset/file/acd67871-f138-48f7-b99d-94af79c8f871/8b7322fc-4671-48dd-a5dc-99911ea8c250.png?t=1785878178" alt="IPPA" style="width:78px;height:60px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=190,format=auto,onerror=redirect,quality=85/uploads/asset/file/c24f3884-88e4-485d-bdc9-a350b8f4add5/1da50585-f8f2-40ef-9572-8d5567da5035.png?t=1785878180" alt="JBS" style="width:95px;height:60px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=488,format=auto,onerror=redirect,quality=85/uploads/asset/file/66500f7d-eed6-409b-b7f1-07bba61580cf/02b7a609-d83e-48ec-a4f9-aa6c99987cc9.png?t=1785878186" alt="National Beef" style="width:244px;height:70px;object-fit:contain;object-position:bottom;">
+                <svg style="width:112px;height:57px;" role="img"><use href="#i-hormel"/></svg>
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=270,format=auto,onerror=redirect,quality=85/uploads/asset/file/92ad3564-424b-4d4f-be17-2cfc0265405d/d70f9d83-0121-4f6c-b0b7-783d25bdb105.png?t=1785878188" alt="Seaboard Foods" style="width:135px;height:60px;object-fit:contain;">
+            </div>
+            <div class="v2-marquee__set" aria-hidden="true">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=210,format=auto,onerror=redirect,quality=85/uploads/asset/file/f8eaa0c7-bba6-4a74-95c0-a2f5bba1d1b5/4a526b0b-3538-47cb-89fc-b497a93d4c21.png?t=1785878174" alt="" style="width:105px;height:50px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=232,format=auto,onerror=redirect,quality=85/uploads/asset/file/32bdbc18-5976-4993-a76e-76292a56a4da/c764faad-a6d0-4cfd-83e7-a832c0ebf0b3.png?t=1785878176" alt="" style="width:112px;height:50px;object-fit:contain;">
+                <svg style="width:182px;height:40px;" role="img"><use href="#i-smithfield"/></svg>
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=156,format=auto,onerror=redirect,quality=85/uploads/asset/file/acd67871-f138-48f7-b99d-94af79c8f871/8b7322fc-4671-48dd-a5dc-99911ea8c250.png?t=1785878178" alt="" style="width:78px;height:60px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=190,format=auto,onerror=redirect,quality=85/uploads/asset/file/c24f3884-88e4-485d-bdc9-a350b8f4add5/1da50585-f8f2-40ef-9572-8d5567da5035.png?t=1785878180" alt="" style="width:95px;height:60px;object-fit:contain;">
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=488,format=auto,onerror=redirect,quality=85/uploads/asset/file/66500f7d-eed6-409b-b7f1-07bba61580cf/02b7a609-d83e-48ec-a4f9-aa6c99987cc9.png?t=1785878186" alt="" style="width:244px;height:70px;object-fit:contain;object-position:bottom;">
+                <svg style="width:112px;height:57px;" role="img"><use href="#i-hormel"/></svg>
+                <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=270,format=auto,onerror=redirect,quality=85/uploads/asset/file/92ad3564-424b-4d4f-be17-2cfc0265405d/d70f9d83-0121-4f6c-b0b7-783d25bdb105.png?t=1785878188" alt="" style="width:135px;height:60px;object-fit:contain;">
+            </div>
+        </div>
     </div>
 
-    <!-- GA4 Direct Tracking -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W4EXW033KR"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-W4EXW033KR', { send_page_view: false });
+    <section class="v2-features" id="features-v2">
+        <div class="v2-features__content">
+            <h2 class="v2-features__headline">Built for Traders Who<br>Move Fast.</h2>
+            <div class="v2-feature-carousel">
+                <button class="v2-feature-carousel__nav v2-feature-carousel__nav--prev" aria-label="Previous"><svg role="img"><use href="#i-chevron"/></svg></button>
+                <button class="v2-feature-carousel__nav v2-feature-carousel__nav--next" aria-label="Next"><svg role="img"><use href="#i-chevron"/></svg></button>
+                <div class="v2-feature-carousel__track">
+                    <div class="v2-feature-carousel__slide is-active">
+                        <div class="v2-feature-card">
+                            <div class="v2-feature-card__media"><video autoplay muted loop playsinline preload="auto"><source src="https://meatingplace-data-landing-v4.vercel.app/videos/My%20Cuts.mp4" type="video/mp4"></video></div>
+                            <div class="v2-feature-card__details">
+                                <div class="v2-feature-card__label">Personalized Dashboard</div>
+                                <h3 class="v2-feature-card__title">Only the Data You Need</h3>
+                                <p class="v2-feature-card__body">Simple, personalized dashboard with the cuts and reports you actually use. No more scrolling through pages of irrelevant prices.</p>
+                                <ul class="v2-feature-list"><li>Track any USDA-reported cut: beef, pork, poultry, lamb or veal</li><li>Fully customizable: your cuts, your order, your view</li><li>Live prices updated daily, straight from USDA</li></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="v2-feature-carousel__slide">
+                        <div class="v2-feature-card">
+                            <div class="v2-feature-card__media"><video autoplay muted loop playsinline preload="none"><source src="https://meatingplace-data-landing-v4.vercel.app/videos/Traders%20View.mp4" type="video/mp4"></video></div>
+                            <div class="v2-feature-card__details">
+                                <div class="v2-feature-card__label">Trader's View</div>
+                                <h3 class="v2-feature-card__title">Your Morning Market Check</h3>
+                                <p class="v2-feature-card__body">See everything you need in one glance. Yesterday's change, 5-day trend, and 30-day movement—all at a glance.</p>
+                                <ul class="v2-feature-list"><li>Quick scan of your favorite cuts in seconds</li><li>Color-coded price movements</li><li>30-day sparklines show trends instantly</li></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="v2-feature-carousel__slide">
+                        <div class="v2-feature-card">
+                            <div class="v2-feature-card__media"><video autoplay muted loop playsinline preload="none"><source src="https://meatingplace-data-landing-v4.vercel.app/videos/Alerts.mp4" type="video/mp4"></video></div>
+                            <div class="v2-feature-card__details">
+                                <div class="v2-feature-card__label">Price Alerts</div>
+                                <h3 class="v2-feature-card__title">Never Miss a Move</h3>
+                                <p class="v2-feature-card__body">Set custom alerts for any cut. Get notified instantly when prices hit your target or move beyond your threshold.</p>
+                                <ul class="v2-feature-list"><li>Custom price thresholds for any cut</li><li>Email notifications when prices move</li><li>Track market volatility automatically</li></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="v2-feature-carousel__slide">
+                        <div class="v2-feature-card">
+                            <div class="v2-feature-card__media"><video autoplay muted loop playsinline preload="none"><source src="https://meatingplace-data-landing-v4.vercel.app/videos/Meatingplace%20Analyst.mp4" type="video/mp4"></video></div>
+                            <div class="v2-feature-card__details">
+                                <div class="v2-feature-card__label">AI Analyst</div>
+                                <h3 class="v2-feature-card__title">Get Answers in Seconds</h3>
+                                <p class="v2-feature-card__body">Ask questions in plain English. Our AI analyst searches across USDA data and industry reports to give you the facts you need.</p>
+                                <ul class="v2-feature-list"><li>Ask questions like "What's driving pork prices?"</li><li>Get sourced answers from USDA and industry data</li><li>No more digging through PDFs and spreadsheets</li></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="v2-feature-carousel__slide">
+                        <div class="v2-feature-card">
+                            <div class="v2-feature-card__media"><video autoplay muted loop playsinline preload="none" data-end-offset="2"><source src="https://meatingplace-data-landing-v4.vercel.app/videos/Trade%20Data.mp4" type="video/mp4"></video></div>
+                            <div class="v2-feature-card__details">
+                                <div class="v2-feature-card__label">Trade Data</div>
+                                <h3 class="v2-feature-card__title">Track International Markets</h3>
+                                <p class="v2-feature-card__body">See import and export flows in one place. Understand how global trade affects your local market.</p>
+                                <ul class="v2-feature-list"><li>Import &amp; export data by country and commodity</li><li>Historical trends and comparisons</li><li>Understand supply chain impacts</li></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="v2-feature-carousel__dots">
+                    <button class="v2-feature-carousel__dot is-active" data-slide="0" aria-label="Go to slide 1"></button>
+                    <button class="v2-feature-carousel__dot" data-slide="1" aria-label="Go to slide 2"></button>
+                    <button class="v2-feature-carousel__dot" data-slide="2" aria-label="Go to slide 3"></button>
+                    <button class="v2-feature-carousel__dot" data-slide="3" aria-label="Go to slide 4"></button>
+                    <button class="v2-feature-carousel__dot" data-slide="4" aria-label="Go to slide 5"></button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // GA4 event tracking - direct to GA4 + postMessage to parent for backwards compat
-        function mpTrackEvent(eventName, label) {
-            // Send directly to GA4 with label parameter
-            gtag('event', eventName, {
-                'event_category': 'ab_test',
-                'event_label': label,
-                'label': label,
-                'ab_variant': label,
-                'page_location': window.location.href
-            });
+    <section class="v2-testimonials">
+        <h2 class="v2-testimonials__heading">See Why Meat Buyers are Switching</h2>
+        <div class="v2-testimonials__grid">
+            <div class="v2-t-card">
+                <svg class="v2-t-card__icon" role="img"><use href="#i-quote1"/></svg>
+                <p class="v2-t-card__quote">"Compared to our old legacy platform, there's less to have to go through. <strong>You go straight to what you need.</strong>"</p>
+                <p class="v2-t-card__who"><b>Raw Materials Buyer</b>Sausage Manufacturer</p>
+            </div>
+            <div class="v2-t-card">
+                <svg class="v2-t-card__icon" role="img"><use href="#i-quote2"/></svg>
+                <p class="v2-t-card__quote">"You can't go by what people are saying. <strong>I'm able to look right away</strong> at what the market's doing."</p>
+                <p class="v2-t-card__who"><b>Master Buyer</b>Meat Distributor</p>
+            </div>
+            <div class="v2-t-card">
+                <svg class="v2-t-card__icon" role="img"><use href="#i-quote3"/></svg>
+                <p class="v2-t-card__quote">"I like it simple. I want to go, look, and see the specific one I want—<strong>and it's all right there.</strong>"</p>
+                <p class="v2-t-card__who"><b>Protein Buyer</b>Food Service Company</p>
+            </div>
+        </div>
+    </section>
 
-            // Also send via postMessage for backwards compatibility
-            if (window.parent !== window) {
-                window.parent.postMessage({
-                    type: 'mp-ga4-event',
-                    event: eventName,
-                    label: label
-                }, 'https://meatingplace.com');
-            }
+    <section class="v2-final-cta" id="pricing-v2">
+        <h2 class="v2-final-cta__heading">Ready to Trade Smarter?</h2>
+        <p class="v2-final-cta__sub">$999 for your first year. Offer ends August 31st. 30-day money-back guarantee.</p>
+        <button class="btn v2-btn--invert" onclick="mpTrialClick(event)">Start Free Trial</button>
+    </section>
+</div>
+
+<!-- ===================== SHARED SCRIPTS ===================== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W4EXW033KR"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-W4EXW033KR', { send_page_view: false });
+
+    function mpTrackEvent(eventName, label) {
+        gtag('event', eventName, {
+            'event_category': 'ab_test',
+            'event_label': label,
+            'ab_variant': label,
+            'page_location': window.location.href
+        });
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: 'mp-ga4-event', event: eventName, label: label }, 'https://meatingplace.com');
         }
+    }
 
-        // A/B Test: Hero Copy Variants
-        (function() {
-            var defined = {
-                control: {
-                    headline: 'Every cut. <em>Every price move.</em>',
-                    sub: 'Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.'
-                },
-                trust: {
-                    headline: 'The source of truth for <em>every buy.</em>',
-                    sub: 'Validate your pricing with daily USDA data across beef, pork, poultry, and lamb. Make every call with confidence.'
-                },
-                speed: {
-                    headline: 'Your morning market check — <em>done in 30 seconds.</em>',
-                    sub: 'Today\'s price. Yesterday\'s close. The week\'s trend. For every cut you trade. No clutter, just what you need.'
-                }
-            };
+    // A/B/C/D Test: Layout + Headline Variants
+    (function() {
+        var defined = {
+            control: { layout: 'v1', headline: 'Every cut. <em>Every price move.</em>', sub: 'Track prices across beef, pork, poultry, and lamb — updated daily from USDA reports. Set alerts, compare 15+ years of history, export in one click.' },
+            speed: { layout: 'v1', headline: 'Your morning market check — <em>done in 30 seconds.</em>', sub: 'Today\'s price. Yesterday\'s close. The week\'s trend. For every cut you trade. No clutter, just what you need.' },
+            control_v2: { layout: 'v2', headline: 'Every cut.<br><em>Every price move.</em>' },
+            speed_v2: { layout: 'v2', headline: 'Your morning market check<br>&mdash; <em>done in 30 seconds.</em>' }
+        };
 
-            var defined_KEYS = ['control', 'trust', 'speed'];
-            var defined_KEY = 'mp_ab_hero_v1';
+        var defined_KEYS = ['control', 'speed', 'control_v2', 'speed_v2'];
+        var defined_KEY = 'mp_ab_hero_v1';
 
-            // Check for existing assignment or assign randomly
-            var variant = localStorage.getItem(defined_KEY);
+        // Check for forced variant via URL param
+        var urlParams = new URLSearchParams(window.location.search);
+        var forcedVariant = urlParams.get('variant');
+
+        var variant;
+        if (forcedVariant && defined[forcedVariant]) {
+            variant = forcedVariant;
+        } else {
+            variant = localStorage.getItem(defined_KEY);
+            // Reassign invalid or old variants
             if (!variant || !defined[variant]) {
                 variant = defined_KEYS[Math.floor(Math.random() * defined_KEYS.length)];
                 try { localStorage.setItem(defined_KEY, variant); } catch(e) {}
             }
+        }
 
-            // Store globally for conversion tracking
-            window.mpAbVariant = variant;
+        window.mpAbVariant = variant;
 
-            // Get or create visitor ID for unique user tracking
-            function getVisitorId() {
-                var id = localStorage.getItem('mp_visitor_id');
-                if (!id) {
-                    id = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('mp_visitor_id', id);
-                }
-                return id;
+        function getVisitorId() {
+            var id = localStorage.getItem('mp_visitor_id');
+            if (!id) {
+                id = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('mp_visitor_id', id);
+            }
+            return id;
+        }
+
+        // Parse and store UTM parameters from URL
+        window.mpUtmParams = (function() {
+            var stored = null;
+            try {
+                var storedJson = localStorage.getItem('mp_utm_params');
+                if (storedJson) stored = JSON.parse(storedJson);
+            } catch(e) {}
+
+            var params = new URLSearchParams(window.location.search);
+            var utmSource = params.get('utm_source');
+            var utmMedium = params.get('utm_medium');
+            var utmCampaign = params.get('utm_campaign');
+            var utmContent = params.get('utm_content');
+
+            if (utmSource || utmMedium || utmCampaign || utmContent) {
+                var utmData = { utmSource: utmSource, utmMedium: utmMedium, utmCampaign: utmCampaign, utmContent: utmContent, timestamp: Date.now() };
+                try { localStorage.setItem('mp_utm_params', JSON.stringify(utmData)); } catch(e) {}
+                return utmData;
             }
 
-            // Track view to our own API for real-time variant analytics
-            function trackView(v) {
-                fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/track-view', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        page: 'data',
-                        variant: v,
-                        visitorId: getVisitorId(),
-                        referrer: document.referrer
-                    })
-                }).catch(function(err) {
-                    console.log('View tracking error:', err);
-                });
-            }
-
-            // Apply variant on DOM ready
-            function applyVariant() {
-                var headlineEl = document.querySelector('.hero-headline');
-                var subEl = document.querySelector('.hero-sub');
-                if (headlineEl && defined[variant]) {
-                    headlineEl.innerHTML = defined[variant].headline;
-                }
-                if (subEl && defined[variant]) {
-                    subEl.textContent = defined[variant].sub;
-                }
-                // Track variant view
-                mpTrackEvent('ab_hero_view', variant);
-                // Track to our own API
-                trackView(variant);
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', applyVariant);
-            } else {
-                applyVariant();
-            }
+            if (stored && stored.timestamp && (Date.now() - stored.timestamp) < 30 * 60 * 1000) return stored;
+            return { utmSource: null, utmMedium: null, utmCampaign: null, utmContent: null };
         })();
 
-        // Stripe + Omeda integration
-        var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
-        var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
+        function trackView(v) {
+            var utmParams = window.mpUtmParams || {};
+            fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/track-view', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: 'data', variant: v, visitorId: getVisitorId(), referrer: document.referrer, utmSource: utmParams.utmSource, utmMedium: utmParams.utmMedium, utmCampaign: utmParams.utmCampaign, utmContent: utmParams.utmContent })
+            }).catch(function(err) { console.log('View tracking error:', err); });
+        }
 
-        // Omeda Identity Capture for Lead Tracking
-        var mpOmedaId = null;
+        function applyVariant() {
+            var cfg = defined[variant];
+            var layoutId = 'layout-' + cfg.layout;
 
-        // Listen for Omeda identity from parent frame (WordPress on meatingplace.com)
-        window.addEventListener('message', function(event) {
-            if (event.origin !== 'https://meatingplace.com') return;
-            if (event.data && event.data.type === 'mp-omeda-identity') {
-                if (event.data.olyEncId) {
-                    mpOmedaId = event.data.olyEncId;
-                    try {
-                        localStorage.setItem('mp_omeda_eid', mpOmedaId);
-                    } catch(ex) {}
-                }
+            // Show correct layout
+            document.getElementById('layout-v1').classList.remove('is-active');
+            document.getElementById('layout-v2').classList.remove('is-active');
+            document.getElementById(layoutId).classList.add('is-active');
+
+            if (cfg.layout === 'v1') {
+                var headlineEl = document.querySelector('#layout-v1 .hero-headline');
+                var subEl = document.querySelector('#layout-v1 .hero-sub');
+                if (headlineEl) headlineEl.innerHTML = cfg.headline;
+                if (subEl) subEl.textContent = cfg.sub;
+            } else {
+                var headlineEl = document.querySelector('#layout-v2 .v2-hero__headline');
+                if (headlineEl) headlineEl.innerHTML = cfg.headline;
+            }
+
+            mpTrackEvent('ab_hero_view', variant);
+            trackView(variant);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyVariant);
+        } else {
+            applyVariant();
+        }
+    })();
+
+    // Stripe + Omeda integration
+    var STRIPE_PAYMENT_URL = 'https://buy.stripe.com/cNicN422GaZk2jPfbV7g408';
+    var OMEDA_LOGIN_FORM_URL = 'https://meatingplace.dragonforms.com/meatingplace_data?pk=trial14';
+    var mpOmedaId = null;
+
+    window.addEventListener('message', function(event) {
+        if (event.origin !== 'https://meatingplace.com') return;
+        if (event.data && event.data.type === 'mp-omeda-identity') {
+            if (event.data.olyEncId) {
+                mpOmedaId = event.data.olyEncId;
+                try { localStorage.setItem('mp_omeda_eid', mpOmedaId); } catch(ex) {}
+            }
+        }
+    });
+
+    if (window.parent !== window) {
+        try { window.parent.postMessage({ type: 'mp-request-identity' }, 'https://meatingplace.com'); } catch(ex) {}
+    }
+
+    // Debounce tracking to prevent duplicate clicks
+    var mpLastLeadCapture = 0;
+    var MP_LEAD_DEBOUNCE_MS = 5000; // 5 second debounce
+
+    function mpCaptureLead(action) {
+        var now = Date.now();
+        if (now - mpLastLeadCapture < MP_LEAD_DEBOUNCE_MS) {
+            console.log('Lead capture debounced');
+            return;
+        }
+        mpLastLeadCapture = now;
+
+        var variant = window.mpAbVariant || 'unknown';
+        var eid = mpOmedaId || getEncryptedId() || localStorage.getItem('mp_omeda_eid') || null;
+        var utmParams = window.mpUtmParams || { utmSource: null, utmMedium: null, utmCampaign: null, utmContent: null };
+        var visitorId = localStorage.getItem('mp_visitor_id') || null;
+        try {
+            fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/capture-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: 'data', action: action, omedaId: eid, variant: variant, visitorId: visitorId, referrer: document.referrer, userAgent: navigator.userAgent, utmSource: utmParams.utmSource, utmMedium: utmParams.utmMedium, utmCampaign: utmParams.utmCampaign, utmContent: utmParams.utmContent })
+            });
+        } catch(ex) {}
+    }
+
+    function getEncryptedId() {
+        var r = '';
+        try {
+            var p = new URLSearchParams(window.location.search);
+            r = p.get('r') || '';
+            if (!r) { var pp = new URLSearchParams(window.parent.location.search); r = pp.get('r') || ''; }
+        } catch(ex) {}
+        if (!r) { var m = document.cookie.match(/(?:^|;\s*)oly_enc_id=([^;]+)/); if (m) r = decodeURIComponent(m[1]); }
+        return r;
+    }
+
+    var encryptedId = getEncryptedId();
+    if (encryptedId) { try { localStorage.setItem('mp_omeda_eid', encryptedId); } catch(ex) {} }
+
+    function mpTrialClick(e) {
+        e.preventDefault();
+        var variant = window.mpAbVariant || 'unknown';
+        mpTrackEvent('free_trial_click', variant);
+        mpCaptureLead('free_trial_click');
+        var eid = getEncryptedId();
+        if (eid) {
+            try { localStorage.setItem('mp_omeda_eid', eid); } catch(ex) {}
+            window.open('https://meatingplace-data-signup-prod.pages.dev/checkout?eid=' + encodeURIComponent(eid) + '&variant=' + encodeURIComponent(variant), '_blank');
+        } else {
+            window.open(OMEDA_LOGIN_FORM_URL + '&lp_variant=' + encodeURIComponent(variant), '_blank');
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href*="calendly"]');
+        if (link) {
+            var variant = window.mpAbVariant || 'unknown';
+            mpTrackEvent('schedule_call_click', variant);
+            mpCaptureLead('schedule_call_click');
+        }
+    });
+
+    // V1 Feature tabs
+    function showFeatureTab(tabId) {
+        document.querySelectorAll('.feat-panel').forEach(function(p) { p.style.display = 'none'; });
+        document.querySelectorAll('.feat-tab').forEach(function(t) { t.classList.remove('feat-tab-active'); });
+        var panel = document.getElementById('feat-panel-' + tabId);
+        if (panel) panel.style.display = 'block';
+        document.querySelectorAll('.feat-tab').forEach(function(t) {
+            if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'" + tabId + "'") > -1) {
+                t.classList.add('feat-tab-active');
             }
         });
+    }
 
-        // Request identity from parent on load
+    function smoothScrollTo(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var rect = el.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        window.scrollTo({ top: rect.top + scrollTop, behavior: 'smooth' });
         if (window.parent !== window) {
-            try {
-                window.parent.postMessage({ type: 'mp-request-identity' }, 'https://meatingplace.com');
-            } catch(ex) {}
+            window.parent.postMessage({ type: 'mp-scroll', offsetTop: rect.top }, 'https://meatingplace.com');
         }
+    }
 
-        // Capture lead to dashboard API
-        function mpCaptureLead(action) {
-            var variant = window.mpAbVariant || 'unknown';
-            var eid = mpOmedaId || getEncryptedId() || localStorage.getItem('mp_omeda_eid') || null;
-            try {
-                fetch('https://meatingplace-subscriber-dashboard.vercel.app/api/capture-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        page: 'data',
-                        action: action,
-                        omedaId: eid,
-                        variant: variant,
-                        referrer: document.referrer,
-                        userAgent: navigator.userAgent
-                    })
-                });
-            } catch(ex) {}
-        }
+    // V2 Feature carousel
+    (function() {
+        var slides = document.querySelectorAll('.v2-feature-carousel__slide');
+        var dots = document.querySelectorAll('.v2-feature-carousel__dot');
+        var prevBtn = document.querySelector('.v2-feature-carousel__nav--prev');
+        var nextBtn = document.querySelector('.v2-feature-carousel__nav--next');
+        if (!slides.length) return;
 
-        function getEncryptedId() {
-            var r = '';
-            try {
-                var p = new URLSearchParams(window.location.search);
-                r = p.get('r') || '';
-                if (!r) {
-                    var pp = new URLSearchParams(window.parent.location.search);
-                    r = pp.get('r') || '';
+        var currentSlide = 0;
+        var autoplayInterval;
+        var autoplayDelay = 8000;
+        var VIDEO_START = 1;
+        var VIDEO_END_OFFSET_DEFAULT = 1;
+
+        function setupVideoTrim(video) {
+            if (video._trimSetup) return;
+            video._trimSetup = true;
+            video.removeAttribute('loop');
+            var endOffset = parseFloat(video.getAttribute('data-end-offset')) || VIDEO_END_OFFSET_DEFAULT;
+            video.addEventListener('timeupdate', function() {
+                if (video.duration && video.currentTime >= video.duration - endOffset) {
+                    video.currentTime = VIDEO_START;
                 }
-            } catch(ex) {}
-            if (!r) {
-                var m = document.cookie.match(/(?:^|;\s*)oly_enc_id=([^;]+)/);
-                if (m) r = decodeURIComponent(m[1]);
-            }
-            return r;
+            });
         }
 
-        var encryptedId = getEncryptedId();
-        if (encryptedId) {
-            try {
-                localStorage.setItem('mp_omeda_eid', encryptedId);
-            } catch(ex) {}
+        function goToSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            slides.forEach(function(slide, i) {
+                slide.classList.toggle('is-active', i === index);
+                var video = slide.querySelector('video');
+                if (video) {
+                    setupVideoTrim(video);
+                    if (i === index) { video.currentTime = VIDEO_START; video.play().catch(function() {}); }
+                    else { video.pause(); }
+                }
+            });
+            dots.forEach(function(dot, i) { dot.classList.toggle('is-active', i === index); });
+            currentSlide = index;
         }
 
-        function mpTrialClick(e) {
-            e.preventDefault();
-            var variant = window.mpAbVariant || 'unknown';
-            mpTrackEvent('free_trial_click', variant);
-            mpCaptureLead('free_trial_click');
-            var eid = getEncryptedId();
-            if (eid) {
-                try {
-                    localStorage.setItem('mp_omeda_eid', eid);
-                } catch(ex) {}
-                window.open('https://meatingplace-data-signup-prod.pages.dev/checkout?eid=' + encodeURIComponent(eid), '_blank');
-            } else {
-                window.open(OMEDA_LOGIN_FORM_URL, '_blank');
-            }
-        }
+        function nextSlide() { goToSlide(currentSlide + 1); }
+        function prevSlide() { goToSlide(currentSlide - 1); }
+        function startAutoplay() { stopAutoplay(); autoplayInterval = setInterval(nextSlide, autoplayDelay); }
+        function stopAutoplay() { if (autoplayInterval) { clearInterval(autoplayInterval); autoplayInterval = null; } }
 
-        // Track Calendly clicks
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('a[href*="calendly"]');
-            if (link) {
-                var variant = window.mpAbVariant || 'unknown';
-                mpTrackEvent('schedule_call_click', variant);
-                mpCaptureLead('schedule_call_click');
-            }
+        if (prevBtn) prevBtn.addEventListener('click', function() { prevSlide(); startAutoplay(); });
+        if (nextBtn) nextBtn.addEventListener('click', function() { nextSlide(); startAutoplay(); });
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                var slideIndex = parseInt(dot.getAttribute('data-slide'), 10);
+                goToSlide(slideIndex);
+                startAutoplay();
+            });
         });
 
-        // Feature tab switching
-        function showFeatureTab(tabId) {
-            document.querySelectorAll('.feat-panel').forEach(function(p) {
-                p.style.display = 'none';
-            });
-            document.querySelectorAll('.feat-tab').forEach(function(t) {
-                t.classList.remove('feat-tab-active');
-            });
-            var panel = document.getElementById('feat-panel-' + tabId);
-            if (panel) panel.style.display = 'block';
-            document.querySelectorAll('.feat-tab').forEach(function(t) {
-                if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'" + tabId + "'") > -1) {
-                    t.classList.add('feat-tab-active');
+        var carousel = document.querySelector('.v2-feature-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', stopAutoplay);
+            carousel.addEventListener('mouseleave', startAutoplay);
+
+            // Touch swipe support for mobile
+            var touchStartX = 0;
+            var touchEndX = 0;
+            var touchStartY = 0;
+            var touchEndY = 0;
+
+            carousel.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                stopAutoplay();
+            }, { passive: true });
+
+            carousel.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                var diffX = touchStartX - touchEndX;
+                var diffY = Math.abs(touchStartY - touchEndY);
+                // Only swipe if horizontal movement > 50px and greater than vertical
+                if (Math.abs(diffX) > 50 && Math.abs(diffX) > diffY) {
+                    if (diffX > 0) { nextSlide(); }
+                    else { prevSlide(); }
                 }
-            });
+                startAutoplay();
+            }, { passive: true });
         }
 
-        // Smooth scroll for anchor links
-        function smoothScrollTo(id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            var rect = el.getBoundingClientRect();
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            window.scrollTo({
-                top: rect.top + scrollTop,
-                behavior: 'smooth'
-            });
+        var firstVideo = slides[0] && slides[0].querySelector('video');
+        if (firstVideo) { firstVideo.load(); firstVideo.currentTime = VIDEO_START; }
+        goToSlide(0);
+        startAutoplay();
+    })();
+
+    // iframe resize
+    (function(){
+        function sendHeight() {
+            var v1 = document.getElementById('layout-v1');
+            var v2 = document.getElementById('layout-v2');
+            var h = v1.classList.contains('is-active') ? v1.scrollHeight : v2.scrollHeight;
             if (window.parent !== window) {
-                window.parent.postMessage({
-                    type: 'mp-scroll',
-                    offsetTop: rect.top
-                }, 'https://meatingplace.com');
+                window.parent.postMessage({ type: 'mp-resize', height: h }, 'https://meatingplace.com');
             }
         }
-
-        // iframe resize for WordPress
-        (function(){
-            function sendHeight() {
-                var h = document.getElementById('mp-data-center');
-                if (h && window.parent !== window) {
-                    window.parent.postMessage({
-                        type: 'mp-resize',
-                        height: h.scrollHeight
-                    }, 'https://meatingplace.com');
-                }
-            }
-            window.addEventListener('load', sendHeight);
-            new MutationObserver(sendHeight).observe(document.getElementById('mp-data-center'), {
-                childList: true,
-                subtree: true,
-                attributes: true
-            });
-            setInterval(sendHeight, 2000);
-        })();
-    </script>
+        window.addEventListener('load', sendHeight);
+        var observer = new MutationObserver(sendHeight);
+        observer.observe(document.getElementById('layout-v1'), { childList: true, subtree: true, attributes: true });
+        observer.observe(document.getElementById('layout-v2'), { childList: true, subtree: true, attributes: true });
+        setInterval(sendHeight, 2000);
+    })();
+</script>
 </body>
 </html>
